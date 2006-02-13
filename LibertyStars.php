@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.1 2006/02/13 19:05:11 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.2 2006/02/13 20:42:21 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.1 $ $Date: 2006/02/13 19:05:11 $
+* @version $Revision: 1.2 $ $Date: 2006/02/13 20:42:21 $
 * @class BitStars
 */
 
@@ -188,7 +188,7 @@ class LibertyStars extends LibertyBase {
 	*/
 	function calculateRating( &$pParamHash ) {
 		global $gBitSystem;
-		$numberOfStars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+		$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
 		$ret = FALSE;
 
 		// TODO: factors that haven't been taken into accound yet:
@@ -196,9 +196,9 @@ class LibertyStars extends LibertyBase {
 		//       - age of document - ???
 
 		// number of ratings needed before value is displayed
-		if( @BitBase::verifyId( $pParamHash['stars_rating'] ) && $pParamHash['stars_rating'] > 0 && $pParamHash['stars_rating'] <= $numberOfStars && $this->isValid() ) {
+		if( @BitBase::verifyId( $pParamHash['stars_rating'] ) && $pParamHash['stars_rating'] > 0 && $pParamHash['stars_rating'] <= $stars && $this->isValid() ) {
 			// normalise to 1000 points
-			$pParamHash['rating'] = $pParamHash['stars_rating'] / $numberOfStars * 1000;
+			$pParamHash['rating'] = $pParamHash['stars_rating'] / $stars * 1000;
 
 			$pParamHash['user']['points'] = $this->calculateUserPoints();
 			$calc['sum'] = $calc['points'] = $calc['count'] = 0;
@@ -282,16 +282,17 @@ function stars_content_list() {
 }
 
 function stars_content_load() {
-	global $gBitUser, $gBitSystem;
-	$numberOfStars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
-	$pixels = 160;
+	global $gBitSystem;
+	$pixels = $gBitSystem->getPreference( 'stars_display_width', 160 );
 	return array(
 		'select_sql' => ", sts.`rating` AS stars_rating, (sts.`rating` * $pixels / 1000) AS stars_pixels ",
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) ",
 	);
 }
 
-function stars_content_display( &$pObject, &$pParamHash, $pStoreHash = NULL ) {
+function stars_content_display( &$pObject, &$pParamHash ) {
+	$stars = new LibertyStars( $pObject->mContentId );
+	$pObject->mInfo['user_has_rated'] = $stars->hasUserRated();
 }
 
 function stars_content_expunge( &$pObject, &$pParamHash ) {
