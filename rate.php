@@ -11,13 +11,15 @@ if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['st
 			if( $tmpObject->isOwner() ) {
 				$starsfeed['error'] = tra( "You cannot rate your own content." );
 			} elseif( $stars->store( $_POST ) ) {
-				$starsfeed['success'] = tra( "Thank you for rating." );
+				//$starsfeed['success'] = tra( "Thank you for rating." );
 			} else {
 				$starsfeed['error'] = $stars->mErrors;
 			}
 		}
 	}
-	$gBitSmarty->assign( 'serviceHash', $tmpObject->mInfo );
+	$serviceHash = $tmpObject->mInfo;
+	$serviceHash['stars_user_pixels'] = $stars->getUserRating( $tmpObject->mContentId );
+	$gBitSmarty->assign( 'serviceHash', $serviceHash );
 } else {
 	$starsfeed['warning'] = tra( "There was a problem trying to apply your rating" );
 }

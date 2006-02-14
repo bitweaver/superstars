@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.2 2006/02/13 20:42:21 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.3 2006/02/14 21:32:40 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.2 $ $Date: 2006/02/13 20:42:21 $
+* @version $Revision: 1.3 $ $Date: 2006/02/14 21:32:40 $
 * @class BitStars
 */
 
@@ -56,12 +56,17 @@ class LibertyStars extends LibertyBase {
 	* @access public
 	**/
 	function store( &$pParamHash ) {
+		global $gBitUser;
 		if( $this->verify( $pParamHash ) ) {
 			$table = BIT_DB_PREFIX."stars";
 			$this->mDb->StartTrans();
 			if( !empty( $this->mInfo ) ) {
 				$result = $this->mDb->associateUpdate( $table, $pParamHash['stars_store'], array( "content_id" => $pParamHash['content_id'] ) );
-				$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
+				if( $this->getUserRating( $pParamHash['content_id'] ) ) {
+					$result = $this->mDb->associateUpdate( $table."_history", $pParamHash['stars_history_store'], array( "content_id" => $pParamHash['content_id'], "user_id" => $gBitUser->mUserId ) );
+				} else {
+					$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
+				}
 			} else {
 				$result = $this->mDb->associateInsert( $table, $pParamHash['stars_store'] );
 				$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
@@ -85,15 +90,13 @@ class LibertyStars extends LibertyBase {
 			$pParamHash['content_id'] = $this->mContentId;
 
 			// only store stuff if user hasn't rated this content before
-			if( !$this->hasUserRated() && $this->calculateRating( $pParamHash ) ) {
+			if( $this->calculateRating( $pParamHash ) ) {
 				$pParamHash['stars_store']['rating']              = ( int )$pParamHash['calc']['rating'];
 				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = ( int )$pParamHash['content_id'];
 				$pParamHash['stars_history_store']['rating']      = ( int )$pParamHash['rating'];
 				$pParamHash['stars_history_store']['points']      = ( int )$pParamHash['user']['points'];
 				$pParamHash['stars_history_store']['rating_time'] = ( int )BitDate::getUTCTime();
 				$pParamHash['stars_history_store']['user_id']     = ( int )$gBitUser->mUserId;
-			} else {
-				$this->mErrors['already_rated'] = "You can only rate once per content item.";
 			}
 		} else {
 			$this->mErrors['unregistered'] = "You have to be registered to rate content.";
@@ -105,13 +108,19 @@ class LibertyStars extends LibertyBase {
 	/**
 	* check if this user has already voted before
 	*/
-	function hasUserRated() {
-		global $gBitUser;
-		if( $this->isValid() ) {
-			$query = "SELECT `user_id` FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
-			$ret = $this->mDb->getOne( $query, array( $this->mContentId, $gBitUser->mUserId ) );
-			return( !empty( $ret ) );
+	function getUserRating( $pContentId = NULL ) {
+		global $gBitSystem, $gBitUser;
+		$ret = FALSE;
+		if( !@BitBase::verifyId( $pContentId ) && $this->isValid() ) {
+			$pContentId = $this->mContentId;
 		}
+
+		if( @BitBase::verifyId( $pContentId ) ) {
+			$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
+			$query = "SELECT (`rating` * $pixels / 1000) AS stars_user_pixels FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
+			$ret = $this->mDb->getOne( $query, array( $pContentId, $gBitUser->mUserId ) );
+		}
+		return $ret;
 	}
 
 	/**
@@ -283,7 +292,7 @@ function stars_content_list() {
 
 function stars_content_load() {
 	global $gBitSystem;
-	$pixels = $gBitSystem->getPreference( 'stars_display_width', 160 );
+	$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
 	return array(
 		'select_sql' => ", sts.`rating` AS stars_rating, (sts.`rating` * $pixels / 1000) AS stars_pixels ",
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) ",
@@ -292,7 +301,7 @@ function stars_content_load() {
 
 function stars_content_display( &$pObject, &$pParamHash ) {
 	$stars = new LibertyStars( $pObject->mContentId );
-	$pObject->mInfo['user_has_rated'] = $stars->hasUserRated();
+	$pObject->mInfo['stars_user_pixels'] = $stars->getUserRating();
 }
 
 function stars_content_expunge( &$pObject, &$pParamHash ) {
