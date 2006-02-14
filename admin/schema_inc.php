@@ -19,11 +19,6 @@ $tables = array(
 
 global $gBitInstaller;
 
-$indices = array (
-	'stars_count_idx' => array( 'table' => 'stars', 'cols' => 'rating_count', 'opts' => NULL ),
-);
-$gBitInstaller->registerSchemaIndexes( LIBERTY_PKG_NAME, $indices );
-
 foreach( array_keys( $tables ) AS $tableName ) {
 	$gBitInstaller->registerSchemaTable( STARS_PKG_NAME, $tableName, $tables[$tableName] );
 }
