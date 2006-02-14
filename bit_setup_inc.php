@@ -8,8 +8,8 @@ if( $gBitSystem->isPackageActive( 'stars' ) ) {
 
 	$gLibertySystem->registerService( LIBERTY_SERVICE_RATING, STARS_PKG_NAME, array(
 		'content_display_function' => 'stars_content_display',
-		'content_load_function' => 'stars_content_load',
-		'content_list_function' => 'stars_content_list',
+		'content_load_sql_function' => 'stars_content_load_sql',
+		'content_list_sql_function' => 'stars_content_list_sql',
 		'content_expunge_function' => 'stars_content_expunge',
 		'content_body_tpl' => 'bitpackage:stars/stars_service.tpl',
 	) );

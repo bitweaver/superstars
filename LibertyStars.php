@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.3 2006/02/14 21:32:40 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.4 2006/02/14 21:53:26 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.3 $ $Date: 2006/02/14 21:32:40 $
+* @version $Revision: 1.4 $ $Date: 2006/02/14 21:53:26 $
 * @class BitStars
 */
 
@@ -286,11 +286,11 @@ class LibertyStars extends LibertyBase {
 	}
 }
 
-function stars_content_list() {
+function stars_content_list_sql() {
 	return stars_content_load();
 }
 
-function stars_content_load() {
+function stars_content_load_sql() {
 	global $gBitSystem;
 	$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
 	return array(
