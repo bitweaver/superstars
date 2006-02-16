@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.5 2006/02/16 09:36:10 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.6 2006/02/16 13:51:54 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.5 $ $Date: 2006/02/16 09:36:10 $
+* @version $Revision: 1.6 $ $Date: 2006/02/16 13:51:54 $
 * @class BitStars
 */
 
@@ -117,7 +117,7 @@ class LibertyStars extends LibertyBase {
 
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
-			$query = "SELECT (`rating` * $pixels / 1000) AS stars_user_pixels FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
+			$query = "SELECT (`rating` * $pixels / 100) AS stars_user_pixels FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
 			$ret = $this->mDb->getOne( $query, array( $pContentId, $gBitUser->mUserId ) );
 		}
 		return $ret;
@@ -206,8 +206,8 @@ class LibertyStars extends LibertyBase {
 
 		// number of ratings needed before value is displayed
 		if( @BitBase::verifyId( $pParamHash['stars_rating'] ) && $pParamHash['stars_rating'] > 0 && $pParamHash['stars_rating'] <= $stars && $this->isValid() ) {
-			// normalise to 1000 points
-			$pParamHash['rating'] = $pParamHash['stars_rating'] / $stars * 1000;
+			// normalise to 100 points
+			$pParamHash['rating'] = $pParamHash['stars_rating'] / $stars * 100;
 
 			$pParamHash['user']['points'] = $this->calculateUserPoints();
 			$calc['sum'] = $calc['points'] = $calc['count'] = 0;
@@ -295,7 +295,7 @@ function stars_content_load_sql() {
 	$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
 	$gBitSmarty->assign( 'loadAjax', TRUE );
 	return array(
-		'select_sql' => ", sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 1000 ) AS stars_pixels, ( sth.`rating` * $pixels / 1000 ) AS stars_user_pixels ",
+		'select_sql' => ", sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
 	);
 }
