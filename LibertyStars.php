@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.6 2006/02/16 13:51:54 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.7 2006/02/16 18:29:06 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.6 $ $Date: 2006/02/16 13:51:54 $
+* @version $Revision: 1.7 $ $Date: 2006/02/16 18:29:06 $
 * @class BitStars
 */
 
@@ -97,6 +97,8 @@ class LibertyStars extends LibertyBase {
 				$pParamHash['stars_history_store']['points']      = ( int )$pParamHash['user']['points'];
 				$pParamHash['stars_history_store']['rating_time'] = ( int )BitDate::getUTCTime();
 				$pParamHash['stars_history_store']['user_id']     = ( int )$gBitUser->mUserId;
+			} else {
+				$this->mErrors['calculate_rating'] = "There was a problem calculating the rating.";
 			}
 		} else {
 			$this->mErrors['unregistered'] = "You have to be registered to rate content.";
