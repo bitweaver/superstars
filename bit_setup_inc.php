@@ -4,10 +4,9 @@ $gBitSystem->registerPackage( 'stars', dirname( __FILE__).'/', TRUE, LIBERTY_SER
 
 if( $gBitSystem->isPackageActive( 'stars' ) ) {
 	require_once( STARS_PKG_PATH.'LibertyStars.php' );
-	$gBitSmarty->assign( 'loadAjax', TRUE );
 
 	$gLibertySystem->registerService( LIBERTY_SERVICE_RATING, STARS_PKG_NAME, array(
-		'content_display_function' => 'stars_content_display',
+		//'content_display_function' => 'stars_content_display',
 		'content_load_sql_function' => 'stars_content_load_sql',
 		'content_list_sql_function' => 'stars_content_list_sql',
 		'content_expunge_function' => 'stars_content_expunge',
