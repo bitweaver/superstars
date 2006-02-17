@@ -17,12 +17,15 @@ if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['st
 			}
 		}
 	}
+	// get up to date reading
+	$stars->load();
 	$serviceHash = $tmpObject->mInfo;
+	$serviceHash['stars_pixels'] = $stars->getField( 'stars_pixels' );
 	$serviceHash['stars_user_pixels'] = $stars->getUserRating( $tmpObject->mContentId );
 	$gBitSmarty->assign( 'serviceHash', $serviceHash );
 } else {
 	$starsfeed['warning'] = tra( "There was a problem trying to apply your rating" );
 }
 $gBitSmarty->assign( "starsfeed", $starsfeed );
-echo $gBitSmarty->fetch( 'bitpackage:stars/stars_service.tpl' );
+echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
 ?>

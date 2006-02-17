@@ -36,6 +36,7 @@ $gBitInstaller->registerUserPermissions( STARS_PKG_NAME, array(
 
 // ### Default Preferences
 $gBitInstaller->registerPreferences( STARS_PKG_NAME, array(
+	array( STARS_PKG_NAME, "stars_display_width", "150" ),
 	array( STARS_PKG_NAME, "stars_used_in_display", "5" ),
 	array( STARS_PKG_NAME, "stars_minimum_ratings", "5" ),
 	array( STARS_PKG_NAME, "stars_user_points", "y" ),
