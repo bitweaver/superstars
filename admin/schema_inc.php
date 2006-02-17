@@ -25,7 +25,7 @@ foreach( array_keys( $tables ) AS $tableName ) {
 }
 
 $gBitInstaller->registerPackageInfo( STARS_PKG_NAME, array(
-	'description' => "Stars package to demonstrate how to build a bitweaver package.",
+	'description' => "A ratings package that allows users to rate any content using a basic interface.",
 	'license' => '<a href="http://www.gnu.org/licenses/licenses.html#LGPL">LGPL</a>',
 ) );
 
