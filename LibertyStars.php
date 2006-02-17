@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.7 2006/02/16 18:29:06 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.8 2006/02/17 12:40:16 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.7 $ $Date: 2006/02/16 18:29:06 $
+* @version $Revision: 1.8 $ $Date: 2006/02/17 12:40:16 $
 * @class BitStars
 */
 
@@ -23,7 +23,9 @@ class LibertyStars extends LibertyBase {
 	**/
 	function load() {
 		if( $this->isValid() ) {
-			$query = "SELECT * FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
+			global $gBitSystem;
+			$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
+			$query = "SELECT (`rating` * $pixels / 100) AS stars_pixels, rating, content_id FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 		}
 		return( count( $this->mInfo ) );
@@ -61,9 +63,9 @@ class LibertyStars extends LibertyBase {
 			$table = BIT_DB_PREFIX."stars";
 			$this->mDb->StartTrans();
 			if( !empty( $this->mInfo ) ) {
-				$result = $this->mDb->associateUpdate( $table, $pParamHash['stars_store'], array( "content_id" => $pParamHash['content_id'] ) );
+				$result = $this->mDb->associateUpdate( $table, $pParamHash['stars_store'], array( "content_id" => $this->mContentId ) );
 				if( $this->getUserRating( $pParamHash['content_id'] ) ) {
-					$result = $this->mDb->associateUpdate( $table."_history", $pParamHash['stars_history_store'], array( "content_id" => $pParamHash['content_id'], "user_id" => $gBitUser->mUserId ) );
+					$result = $this->mDb->associateUpdate( $table."_history", $pParamHash['stars_history_store'], array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
 				} else {
 					$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
 				}
@@ -92,7 +94,7 @@ class LibertyStars extends LibertyBase {
 			// only store stuff if user hasn't rated this content before
 			if( $this->calculateRating( $pParamHash ) ) {
 				$pParamHash['stars_store']['rating']              = ( int )$pParamHash['calc']['rating'];
-				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = ( int )$pParamHash['content_id'];
+				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = ( int )$this->mContentId;
 				$pParamHash['stars_history_store']['rating']      = ( int )$pParamHash['rating'];
 				$pParamHash['stars_history_store']['points']      = ( int )$pParamHash['user']['points'];
 				$pParamHash['stars_history_store']['rating_time'] = ( int )BitDate::getUTCTime();
@@ -165,9 +167,9 @@ class LibertyStars extends LibertyBase {
 		$contentIds = array_unique( $contentIds );
 
 		// update user points in accordance with new settings
-		foreach( $userIds as $user_id ) {
+		foreach( $userIds as $userId ) {
 			$userPoints = $this->calculateUserPoints( $user_id );
-			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_history` SET `points`=? WHERE `user_id`=?", array( $userPoints, $user_id ) );
+			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_history` SET `points`=? WHERE `user_id`=?", array( $userPoints, $userId ) );
 		}
 
 		// update the calculations in the stars table
@@ -198,7 +200,7 @@ class LibertyStars extends LibertyBase {
 	* calculate the correct value to insert into the database
 	*/
 	function calculateRating( &$pParamHash ) {
-		global $gBitSystem;
+		global $gBitSystem, $gBitUser;
 		$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
 		$ret = FALSE;
 
@@ -211,8 +213,17 @@ class LibertyStars extends LibertyBase {
 			// normalise to 100 points
 			$pParamHash['rating'] = $pParamHash['stars_rating'] / $stars * 100;
 
+			// if the user is submitting his rating again, we need to update the value in the db before we get the summary
+			if( $userRating = $this->getUserRating() ) {
+				if( $userRating != $pParamHash['rating'] ) {
+					$tmpUpdate['rating'] = ( int )$pParamHash['rating'];
+					$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."stars_history", $tmpUpdate, array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
+				}
+			}
+
 			$pParamHash['user']['points'] = $this->calculateUserPoints();
 			$calc['sum'] = $calc['points'] = $calc['count'] = 0;
+			// the user rating has to be updated before we get the summary
 			if( $summary = $this->getRatingSummary() ) {
 				foreach( $summary as $info ) {
 					$calc['sum']    += $info['points'] * $info['rating'];
@@ -296,6 +307,7 @@ function stars_content_load_sql() {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 	$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
 	$gBitSmarty->assign( 'loadAjax', TRUE );
+	$gBitSmarty->assign( 'loadStarsCss', TRUE );
 	return array(
 		'select_sql' => ", sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
