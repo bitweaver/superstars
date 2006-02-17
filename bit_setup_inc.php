@@ -1,6 +1,12 @@
 <?php
 global $gBitSystem, $gBitSmarty;
-$gBitSystem->registerPackage( 'stars', dirname( __FILE__).'/', TRUE, LIBERTY_SERVICE_RATING );
+
+$registerHash = array(
+	'package_name' => 'stars',
+	'package_path' => dirname( __FILE__ ).'/',
+	'service' => LIBERTY_SERVICE_RATING,
+);
+$gBitSystem->registerPackage( $registerHash );
 
 if( $gBitSystem->isPackageActive( 'stars' ) ) {
 	require_once( STARS_PKG_PATH.'LibertyStars.php' );
