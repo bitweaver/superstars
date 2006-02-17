@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.2 2006/02/14 21:32:41 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.3 2006/02/17 21:10:45 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -8,15 +8,20 @@ require_once( STARS_PKG_PATH.'LibertyStars.php' );
 $gBitSmarty->assign_by_ref( 'feedback', $feedback = array() );
 
 $formStarsOptions = array(
-//	"stars_used_in_display" => array(
-//		'label' => 'Stars used in display',
-//		'note' => 'If you want to change the number of stars used in the display, you can set the number here.',
-//		'type' => 'numeric',
-//	),
+	"stars_used_in_display" => array(
+		'label' => 'Stars used in display',
+		'note' => 'If you want to change the number of stars used in the display, you can set the number here.',
+		'type' => 'numeric',
+	),
 	"stars_minimum_ratings" => array(
 		'label' => 'Minimum Number',
 		'note' => 'The minimum number of ratings required before the value is shown. Use 1 if you want to display the results after the first rating.',
 		'type' => 'numeric',
+	),
+	"stars_multiratings" => array(
+		'label' => 'Multiple Ratings',
+		'note' => 'Allow users to change their ratings at any time. When content changes, users can update their ratings accordingly.',
+		'type' => 'checkbox',
 	),
 );
 $gBitSmarty->assign( 'formStarsOptions', $formStarsOptions );

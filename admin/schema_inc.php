@@ -2,6 +2,7 @@
 $tables = array(
 	'stars' => "
 		content_id I4 NOTNULL,
+		rating_count I4,
 		rating I4
 		CONSTRAINT ', CONSTRAINT `stars_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 	",
@@ -36,7 +37,7 @@ $gBitInstaller->registerUserPermissions( STARS_PKG_NAME, array(
 
 // ### Default Preferences
 $gBitInstaller->registerPreferences( STARS_PKG_NAME, array(
-	array( STARS_PKG_NAME, "stars_display_width", "150" ),
+	//array( STARS_PKG_NAME, "stars_display_width", "125" ),
 	array( STARS_PKG_NAME, "stars_used_in_display", "5" ),
 	array( STARS_PKG_NAME, "stars_minimum_ratings", "5" ),
 	array( STARS_PKG_NAME, "stars_user_points", "y" ),

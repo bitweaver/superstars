@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.8 2006/02/17 12:40:16 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.9 2006/02/17 21:10:44 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.8 $ $Date: 2006/02/17 12:40:16 $
+* @version $Revision: 1.9 $ $Date: 2006/02/17 21:10:44 $
 * @class BitStars
 */
 
@@ -24,8 +24,9 @@ class LibertyStars extends LibertyBase {
 	function load() {
 		if( $this->isValid() ) {
 			global $gBitSystem;
-			$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
-			$query = "SELECT (`rating` * $pixels / 100) AS stars_pixels, rating, content_id FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
+			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+			$pixels = $stars *  22;
+			$query = "SELECT ( `rating` * $pixels / 100 ) AS stars_pixels, rating AS stars_rating, content_id FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 		}
 		return( count( $this->mInfo ) );
@@ -63,12 +64,14 @@ class LibertyStars extends LibertyBase {
 			$table = BIT_DB_PREFIX."stars";
 			$this->mDb->StartTrans();
 			if( !empty( $this->mInfo ) ) {
-				$result = $this->mDb->associateUpdate( $table, $pParamHash['stars_store'], array( "content_id" => $this->mContentId ) );
 				if( $this->getUserRating( $pParamHash['content_id'] ) ) {
 					$result = $this->mDb->associateUpdate( $table."_history", $pParamHash['stars_history_store'], array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
+					// we don't have a new entry in the database and the rating_count stays the same
+					unset( $pParamHash['stars_store']['rating_count'] );
 				} else {
 					$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
 				}
+				$result = $this->mDb->associateUpdate( $table, $pParamHash['stars_store'], array( "content_id" => $this->mContentId ) );
 			} else {
 				$result = $this->mDb->associateInsert( $table, $pParamHash['stars_store'] );
 				$result = $this->mDb->associateInsert( $table."_history", $pParamHash['stars_history_store'] );
@@ -94,6 +97,7 @@ class LibertyStars extends LibertyBase {
 			// only store stuff if user hasn't rated this content before
 			if( $this->calculateRating( $pParamHash ) ) {
 				$pParamHash['stars_store']['rating']              = ( int )$pParamHash['calc']['rating'];
+				$pParamHash['stars_store']['rating_count']        = ( int )$pParamHash['calc']['count'] + 1;
 				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = ( int )$this->mContentId;
 				$pParamHash['stars_history_store']['rating']      = ( int )$pParamHash['rating'];
 				$pParamHash['stars_history_store']['points']      = ( int )$pParamHash['user']['points'];
@@ -120,9 +124,10 @@ class LibertyStars extends LibertyBase {
 		}
 
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
-			$query = "SELECT (`rating` * $pixels / 100) AS stars_user_pixels FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
-			$ret = $this->mDb->getOne( $query, array( $pContentId, $gBitUser->mUserId ) );
+			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+			$pixels = $stars *  22;
+			$query = "SELECT (`rating` * $pixels / 100) AS stars_user_pixels, ( `rating` * $stars / 100 ) AS stars_user_rating FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
+			$ret = $this->mDb->getRow( $query, array( $pContentId, $gBitUser->mUserId ) );
 		}
 		return $ret;
 	}
@@ -168,7 +173,7 @@ class LibertyStars extends LibertyBase {
 
 		// update user points in accordance with new settings
 		foreach( $userIds as $userId ) {
-			$userPoints = $this->calculateUserPoints( $user_id );
+			$userPoints = $this->calculateUserPoints( $userId );
 			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_history` SET `points`=? WHERE `user_id`=?", array( $userPoints, $userId ) );
 		}
 
@@ -191,7 +196,7 @@ class LibertyStars extends LibertyBase {
 				$rating = round( $calc['sum'] / $calc['points'] );
 			}
 
-			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars` SET `rating`=? WHERE `content_id`=?", array( $rating, $content_id ) );
+			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars` SET `rating`=?, `rating_count`=? WHERE `content_id`=?", array( $rating, $calc['count'], $content_id ) );
 		}
 		return TRUE;
 	}
@@ -215,10 +220,8 @@ class LibertyStars extends LibertyBase {
 
 			// if the user is submitting his rating again, we need to update the value in the db before we get the summary
 			if( $userRating = $this->getUserRating() ) {
-				if( $userRating != $pParamHash['rating'] ) {
-					$tmpUpdate['rating'] = ( int )$pParamHash['rating'];
-					$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."stars_history", $tmpUpdate, array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
-				}
+				$tmpUpdate['rating'] = ( int )$pParamHash['rating'];
+				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."stars_history", $tmpUpdate, array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
 			}
 
 			$pParamHash['user']['points'] = $this->calculateUserPoints();
@@ -233,11 +236,12 @@ class LibertyStars extends LibertyBase {
 			}
 
 			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
-			if( $calc['count'] < $minRatings ) {
+			if( ( $calc['count'] + 1 ) < $minRatings ) {
 				$pParamHash['calc']['rating'] = 0;
 			} else {
 				$pParamHash['calc']['rating'] = round( ( $calc['sum'] + ( $pParamHash['rating'] * $pParamHash['user']['points'] ) ) / ( $calc['points'] + $pParamHash['user']['points'] ) );
 			}
+			$pParamHash['calc']['count'] = $calc['count'];
 			$ret = TRUE;
 		}
 		return $ret;
@@ -246,6 +250,7 @@ class LibertyStars extends LibertyBase {
 	function calculateUserPoints( $pUserId = NULL ) {
 		global $gBitUser, $gBitSystem;
 		if( $gBitSystem->isFeatureActive( 'stars_user_points' ) ) {
+
 			// allow overriding of currently loaded user
 			if( @BitBase::verifyId( $pUserId ) ) {
 				$tmpUser = new BitPermUser( $pUserId );
@@ -288,7 +293,8 @@ class LibertyStars extends LibertyBase {
 			}
 
 			// TODO: run some tests to see if this is a good way of evaluating power of a user
-			if( !$ret = round( log( $age * $permission * $activity, 2 ) ) ) {
+			// ensure that we always have a positive number here to avoid chaos - this alse makes sure new users have at least a bit of a say
+			if( ( $ret = round( log( $age * $permission * $activity, 2 ) ) ) < 1 ) {
 				$ret = 1;
 			}
 		} else {
@@ -299,17 +305,21 @@ class LibertyStars extends LibertyBase {
 	}
 }
 
+/********* SERVICE FUNCTIONS *********/
+
 function stars_content_list_sql() {
 	return stars_content_load_sql();
 }
 
 function stars_content_load_sql() {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
-	$pixels = $gBitSystem->getPreference( 'stars_display_width', 150 );
+	$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+	$pixels = $stars *  22;
+	$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 	$gBitSmarty->assign( 'loadAjax', TRUE );
 	$gBitSmarty->assign( 'loadStarsCss', TRUE );
 	return array(
-		'select_sql' => ", sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
+		'select_sql' => ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
 		'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
 	);
 }
