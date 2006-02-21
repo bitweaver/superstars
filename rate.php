@@ -1,5 +1,6 @@
 <?php
 require_once( "../bit_setup_inc.php" );
+$gBitSystem->verifyPackage( 'stars' );
 $starsfeed = array();
 if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['stars_rating'] ) ) {
 	if( $tmpObject = LibertyBase::getLibertyObject( $_POST['content_id'] ) ) {
