@@ -1,9 +1,8 @@
 {strip}
 {if $serviceHash.stars_pixels}
-	<ul class="stars-rating">
-		<li class="stars-current" style="width:{$serviceHash.stars_pixels}px;"></li>
-	</ul>
+	<div class="stars-rating"><div class="stars-current" style="width:{$serviceHash.stars_pixels}px;"></div></div>
 {else}
 	{tr}Not Rated{/tr}
 {/if}
+<br />
 {/strip}

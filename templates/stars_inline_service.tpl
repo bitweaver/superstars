@@ -18,7 +18,7 @@
 			<small>{math equation="rating * stars / 100 " stars=`$gBitSystemPrefs.stars_used_in_display` rating=`$serviceHash.stars_rating` format="%.1f"} / {$gBitSystemPrefs.stars_used_in_display} in {$serviceHash.stars_rating_count} {tr}votes{/tr}</small>
 		{/if}
 
-		{if $gBitSystem->isFeatureActive( "stars_multiratings" )}
+		{if $gBitSystem->isFeatureActive( "stars_rerating" )}
 			<ul class="stars-rating">
 				<li class="stars-current" style="width:{$serviceHash.stars_user_pixels}px;">{tr}Rating{/tr}: {$serviceHash.stars_rating}</li>
 				{$smarty.capture.starsLinks}

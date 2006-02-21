@@ -7,4 +7,4 @@
 	.stars-rating a.stars-{$rate}		{ldelim}left:{$rate*22-22}px;{rdelim}
 	.stars-rating a.stars-{$rate}:hover	{ldelim}width:{$rate*22}px;{rdelim}
 {/foreach}
-.stars-rating li.stars-current	{ldelim}background:url(/stars/icons/stars.gif) left bottom; position:absolute; height:22px; display:block; text-indent:-9000px; z-index:1;{rdelim}
+.stars-rating .stars-current	{ldelim}background:url(/stars/icons/stars.gif) left bottom; position:absolute; height:22px; display:block; text-indent:-9000px; z-index:1;{rdelim}
