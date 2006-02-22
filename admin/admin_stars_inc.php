@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.4 2006/02/21 18:40:05 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.5 2006/02/22 12:54:34 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -18,7 +18,7 @@ $formStarsOptions = array(
 		'note' => 'The minimum number of ratings required before the value is shown. Use 1 if you want to display the results after the first rating.',
 		'type' => 'numeric',
 	),
-	"stars_reratings" => array(
+	"stars_rerating" => array(
 		'label' => 'Re- Ratings',
 		'note' => 'Allow users to change their ratings at any time. When content changes, users can update their rating accordingly.',
 		'type' => 'checkbox',
