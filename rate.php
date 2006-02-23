@@ -4,6 +4,10 @@ $gBitSystem->verifyPackage( 'stars' );
 $starsfeed = array();
 if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['stars_rating'] ) ) {
 	if( $tmpObject = LibertyBase::getLibertyObject( $_POST['content_id'] ) ) {
+
+		// check if this feature allows rating
+		$gBitSystem->verifyFeature( 'stars_rate_'.$tmpObject->getContentType() );
+
 		$starsfeed = array();
 		$stars = new LibertyStars( $tmpObject->mContentId );
 		if( !$gBitUser->isRegistered() ) {

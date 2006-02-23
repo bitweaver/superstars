@@ -9,6 +9,8 @@
 				{forminput}
 					{if $output.type == 'numeric'}
 						{html_options name="$item" values=$numbers output=$numbers selected=`$gBitSystemPrefs.$item` labels=false id=$item}
+					{elseif $output.type == 'input'}
+						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystemPrefs.stars_auto_hide|default:0}" />
 					{else}
 						{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
 					{/if}
@@ -16,6 +18,14 @@
 				{/forminput}
 			</div>
 		{/foreach}
+
+		<div class="row">
+			{formlabel label="Ratable Content"}
+			{forminput}
+				{html_checkboxes options=$formRatable.guids value=y name=ratable_content separator="<br />" checked=$formRatable.checked}
+				{formhelp note="Here you can select what content can be rated."}
+			{/forminput}
+		</div>
 	{/legend}
 
 	{legend legend="Weighting"}
