@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.11 2006/03/07 06:58:49 lsces Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.12 2006/03/07 08:59:36 lsces Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.11 $ $Date: 2006/03/07 06:58:49 $
+* @version $Revision: 1.12 $ $Date: 2006/03/07 08:59:36 $
 * @class BitStars
 */
 
@@ -26,7 +26,7 @@ class LibertyStars extends LibertyBase {
 			global $gBitSystem;
 			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 			$pixels = $stars *  22;
-			$query = "SELECT ( `rating` * $pixels / 100 ) AS stars_pixels, rating AS stars_rating, content_id FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
+			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 		}
 		return( count( $this->mInfo ) );
@@ -43,11 +43,11 @@ class LibertyStars extends LibertyBase {
 		}
 
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$query = "SELECT sth.`rating`, COUNT( sth.`rating`) AS rating_count, SUM( sth.`points` ) AS points
+			$query = "SELECT sth.`rating`, COUNT( sth.`rating`) AS `rating_count`, SUM( sth.`points` ) AS `points`
 				FROM `".BIT_DB_PREFIX."stars` sts
 				LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON( sth.`content_id`=sts.`content_id` )
 				WHERE sts.`content_id`=?
-				GROUP BY( sth.`rating` )";
+				GROUP BY sth.`rating`";
 			$ret = $this->mDb->getAll( $query, array( $pContentId ) );
 		}
 		return $ret;
@@ -126,7 +126,7 @@ class LibertyStars extends LibertyBase {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
 			$pixels = $stars *  22;
-			$query = "SELECT (`rating` * $pixels / 100) AS stars_user_pixels, ( `rating` * $stars / 100 ) AS stars_user_rating FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
+			$query = "SELECT (`rating` * $pixels / 100) AS `stars_user_pixels`, ( `rating` * $stars / 100 ) AS `stars_user_rating` FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
 			$ret = $this->mDb->getRow( $query, array( $pContentId, $gBitUser->mUserId ) );
 		}
 		return $ret;
@@ -313,8 +313,9 @@ function stars_content_list_sql() {
 
 function stars_content_load_sql() {
 	global $gContent, $gBitSystem, $gBitUser, $gBitSmarty;
-	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$gContent->getContentType() ) ) {
-		$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+//	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$gContent->getContentType() ) ) {
+	if( $gBitSystem->isFeatureActive( 'stars_rate_bitpage' ) ) {
+		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  22;
 		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 		$gBitSmarty->assign( 'loadAjax', TRUE );
