@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.12 2006/03/07 08:59:36 lsces Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.13 2006/03/07 10:09:31 lsces Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.12 $ $Date: 2006/03/07 08:59:36 $
+* @version $Revision: 1.13 $ $Date: 2006/03/07 10:09:31 $
 * @class BitStars
 */
 
@@ -313,8 +313,7 @@ function stars_content_list_sql() {
 
 function stars_content_load_sql() {
 	global $gContent, $gBitSystem, $gBitUser, $gBitSmarty;
-//	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$gContent->getContentType() ) ) {
-	if( $gBitSystem->isFeatureActive( 'stars_rate_bitpage' ) ) {
+	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$gContent->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  22;
 		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
