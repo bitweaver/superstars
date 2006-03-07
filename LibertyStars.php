@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.10 2006/02/23 15:46:28 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.11 2006/03/07 06:58:49 lsces Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.10 $ $Date: 2006/02/23 15:46:28 $
+* @version $Revision: 1.11 $ $Date: 2006/03/07 06:58:49 $
 * @class BitStars
 */
 
@@ -24,7 +24,7 @@ class LibertyStars extends LibertyBase {
 	function load() {
 		if( $this->isValid() ) {
 			global $gBitSystem;
-			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 			$pixels = $stars *  22;
 			$query = "SELECT ( `rating` * $pixels / 100 ) AS stars_pixels, rating AS stars_rating, content_id FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );

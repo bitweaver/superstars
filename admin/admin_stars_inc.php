@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.6 2006/02/23 15:46:29 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.7 2006/03/07 06:58:48 lsces Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -78,7 +78,7 @@ if( !empty( $_REQUEST['stars_preferences'] ) ) {
 		}
 	}
 	foreach( array_keys( $formRatable['guids'] ) as $ratable ) {
-		$gBitSystem->storePreference( $ratable, ( ( !empty( $_REQUEST['ratable_content'] ) && in_array( $ratable, $_REQUEST['ratable_content'] ) ) ? 'y' : NULL ), STARS_PKG_NAME );
+		$gBitSystem->storeConfig( $ratable, ( ( !empty( $_REQUEST['ratable_content'] ) && in_array( $ratable, $_REQUEST['ratable_content'] ) ) ? 'y' : NULL ), STARS_PKG_NAME );
 	}
 }
 
@@ -93,7 +93,7 @@ if( !empty( $_REQUEST['recalculate'] ) ) {
 
 // allow selection of what packages can have ratings
 foreach( $gLibertySystem->mContentTypes as $cType ) {
-	if( $gBitSystem->getPreference( 'stars_rate_'.$cType['content_type_guid'] ) ) {
+	if( $gBitSystem->getConfig( 'stars_rate_'.$cType['content_type_guid'] ) ) {
 		$formRatable['checked'][] = 'stars_rate_'.$cType['content_type_guid'];
 	}
 }

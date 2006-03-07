@@ -8,11 +8,11 @@
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
 					{if $output.type == 'numeric'}
-						{html_options name="$item" values=$numbers output=$numbers selected=`$gBitSystemPrefs.$item` labels=false id=$item}
+						{html_options name="$item" values=$numbers output=$numbers selected=$gBitSystem->getConfig($item) labels=false id=$item}
 					{elseif $output.type == 'input'}
-						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystemPrefs.stars_auto_hide|default:0}" />
+						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystem->getConfig(stars_auto_hide,0)}" />
 					{else}
-						{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
 					{/if}
 					{formhelp note=`$output.note` page=`$output.page`}
 				{/forminput}
@@ -35,9 +35,9 @@
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
 					{if $output.type == 'numeric'}
-						{html_options name="$item" values=$numbers output=$numbers selected=`$gBitSystemPrefs.$item` labels=false id=$item}
+						{html_options name="$item" values=$numbers output=$numbers selected=$gBitSystem->getConfig($item) labels=false id=$item}
 					{else}
-						{html_checkboxes name="$item" values="y" checked=`$gBitSystemPrefs.$item` labels=false id=$item}
+						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
 					{/if}
 					{formhelp note=`$output.note` page=`$output.page`}
 				{/forminput}
