@@ -9,7 +9,7 @@
 
 	{capture name=starsRating}
 		{if $serviceHash.stars_rating}
-			{math equation="rating * stars / 100 " stars="$gBitSystem->getConfig('stars_used_in_display')" rating=`$serviceHash.stars_rating` format="%.1f"} / {$gBitSystem->getConfig('stars_used_in_display')} in {$serviceHash.stars_rating_count} {tr}votes{/tr}
+			{math equation="rating * stars / 100" stars=$gBitSystem->getConfig('stars_used_in_display') rating=`$serviceHash.stars_rating` format="%.1f"} / {$gBitSystem->getConfig('stars_used_in_display')} in {$serviceHash.stars_rating_count} {tr}votes{/tr}
 		{/if}
 	{/capture}
 
@@ -27,7 +27,7 @@
 
 			{if $gBitSystem->isFeatureActive( "stars_rerating" )}
 				<ul class="stars-rating">
-					<li class="stars-current" style="width:{$serviceHash.stars_user_pixels|default:0}px;">{math equation="rating * stars / 100 " stars="$gBitSystem->getConfig('stars_used_in_display')" rating=`$serviceHash.stars_rating` format="%.1f"} / {$gBitSystem->getConfig('stars_used_in_display')} in {$serviceHash.stars_rating_count} {tr}votes{/tr}</li>
+					<li class="stars-current" style="width:{$serviceHash.stars_user_pixels|default:0}px;">{math equation="rating * stars / 100" stars=$gBitSystem->getConfig('stars_used_in_display') rating=`$serviceHash.stars_rating` format="%.1f"} / {$gBitSystem->getConfig('stars_used_in_display')} in {$serviceHash.stars_rating_count} {tr}votes{/tr}</li>
 					{$smarty.capture.starsLinks}
 				</ul>
 			{/if}
