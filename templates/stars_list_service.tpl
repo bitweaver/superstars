@@ -6,5 +6,5 @@
 		{tr}Not Rated{/tr}
 	{/if}
 	<br />
-{/*if*}
+{*/if*}
 {/strip}
