@@ -1,4 +1,4 @@
-{if $gBitSystem->isFeatureActive( "stars_rate_`$gContent->mContentTypeGuid`" )}
+{*if $gBitSystem->isFeatureActive( "stars_rate_`$gContent->mContentTypeGuid`" )*}
 	{if $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}
 		{capture name=starsLinks}
 			{foreach from=$starsLinks item=k key=rate}
@@ -46,4 +46,4 @@
 		</div>
 		{formfeedback hash=$starsfeed}
 	{/if}
-{/if}
+{*/if*}
