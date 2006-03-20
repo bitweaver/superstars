@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.14 2006/03/17 14:08:26 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.15 2006/03/20 16:20:27 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.14 $ $Date: 2006/03/17 14:08:26 $
+* @version $Revision: 1.15 $ $Date: 2006/03/20 16:20:27 $
 * @class BitStars
 */
 
@@ -307,23 +307,23 @@ class LibertyStars extends LibertyBase {
 
 /********* SERVICE FUNCTIONS *********/
 
-function stars_content_list_sql() {
-	return stars_content_load_sql();
+function stars_content_list_sql( &$pObject ) {
+	return stars_content_load_sql( $pObject );
 }
 
-function stars_content_load_sql() {
-	global $gContent, $gBitSystem, $gBitUser, $gBitSmarty;
-	//if( $gBitSystem->isFeatureActive( 'stars_rate_'.$gContent->getContentType() ) ) {
+function stars_content_load_sql( &$pObject ) {
+	global $gBitSystem, $gBitUser, $gBitSmarty;
+	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  22;
 		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 		$gBitSmarty->assign( 'loadAjax', TRUE );
-		$gBitSmarty->assign( 'loadStarsCss', TRUE );
+		$gBitSmarty->assign( 'loadStars', TRUE );
 		return array(
 			'select_sql' => ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
 			'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
 		);
-	//}
+	}
 }
 
 function stars_content_expunge( &$pObject, &$pParamHash ) {

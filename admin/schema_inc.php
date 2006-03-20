@@ -31,8 +31,8 @@ $gBitInstaller->registerPackageInfo( STARS_PKG_NAME, array(
 
 // ### Default UserPermissions
 $gBitInstaller->registerUserPermissions( STARS_PKG_NAME, array(
-	array( 'bit_p_admin_stars', 'Can admin stars', 'admin', STARS_PKG_NAME ),
-	array( 'bit_p_remove_stars', 'Can delete stars', 'admin',  STARS_PKG_NAME ),
+//	array( 'bit_p_admin_stars', 'Can admin stars', 'admin', STARS_PKG_NAME ),
+//	array( 'bit_p_remove_stars', 'Can delete stars', 'admin',  STARS_PKG_NAME ),
 ) );
 
 // ### Default Preferences
