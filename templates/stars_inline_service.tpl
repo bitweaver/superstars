@@ -14,7 +14,7 @@
 	{/capture}
 
 	{if $serviceHash.stars_user_pixels}
-		<div id="stars-{$serviceHash.content_id}">
+		<div class="stars-container" id="stars-{$serviceHash.content_id}">
 			<ul class="stars-rating">
 				<li class="stars-current" style="width:{$serviceHash.stars_pixels|default:0}px;"></li>
 			</ul>
