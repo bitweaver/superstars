@@ -1,4 +1,5 @@
 {if $loadStars}
+	<script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
 	{if $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}
 		{capture name=starsLinks}
 			{foreach from=$starsLinks item=k key=rate}
@@ -20,7 +21,7 @@
 			</ul>
 
 			{if !$serviceHash.stars_rating}
-				<small>{if $gBitUser->mUserId == $serviceHash.user_id}{tr}You can not rate your own content.{/tr}{else}{tr}Waiting for {$gBitSystem->getConfig('stars_minimum_ratings',5)} ratings{/tr}{/if}</small><br />
+				<small>{if $gBitUser->mUserId == $serviceHash.user_id}{tr}You cannot rate your own content.{/tr}{else}{tr}Waiting for {$gBitSystem->getConfig('stars_minimum_ratings',5)} ratings{/tr}{/if}</small><br />
 			{else}
 				<small>{$smarty.capture.starsRating}</small>
 			{/if}
@@ -43,7 +44,7 @@
 			{if !$gBitUser->isRegistered()}
 				<small>{tr}You need to <a href="{$smarty.const.USERS_PKG_URL}login.php">log in</a> to rate.{/tr}</small><br />
 			{elseif $gBitUser->mUserId == $serviceHash.user_id}
-				<small>{tr}You can not rate your own content.{/tr}</small>
+				<small>{tr}You cannot rate your own content.{/tr}</small>
 			{/if}
 		</div>
 		{formfeedback hash=$starsfeed}
