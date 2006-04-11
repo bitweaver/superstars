@@ -21,7 +21,7 @@
 			</ul>
 
 			{if !$serviceHash.stars_rating}
-				<small>{if $gBitUser->mUserId == $serviceHash.user_id}{tr}You cannot rate your own content.{/tr}{else}{tr}Waiting for {$gBitSystem->getConfig('stars_minimum_ratings',5)} ratings{/tr}{/if}</small><br />
+				<small>{if $gBitUser->mUserId == $serviceHash.user_id}{tr}You cannot rate your own content.{/tr}{else}{tr}Your rating:{/tr} {math equation="rating * stars / 100" stars=$gBitSystem->getConfig('stars_used_in_display') rating=`$serviceHash.stars_rating` format="%.1f"}{/if}</small><br />
 			{else}
 				<small>{$smarty.capture.starsRating}</small>
 			{/if}
