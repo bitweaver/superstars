@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.15 2006/03/20 16:20:27 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.16 2006/04/12 12:48:13 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.15 $ $Date: 2006/03/20 16:20:27 $
+* @version $Revision: 1.16 $ $Date: 2006/04/12 12:48:13 $
 * @class BitStars
 */
 
@@ -26,7 +26,7 @@ class LibertyStars extends LibertyBase {
 			global $gBitSystem;
 			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 			$pixels = $stars *  22;
-			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
+			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 		}
 		return( count( $this->mInfo ) );
@@ -188,8 +188,7 @@ class LibertyStars extends LibertyBase {
 				}
 			}
 
-			// we are adding the new rating here, so need to reduce this by one
-			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 ) - 1;
+			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
 			if( $calc['count'] < $minRatings ) {
 				$rating = 0;
 			} else {
@@ -235,7 +234,8 @@ class LibertyStars extends LibertyBase {
 				}
 			}
 
-			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
+			// we are adding the new rating here, so need to reduce this by one
+			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 ) - 1;
 			if( ( $calc['count'] + 1 ) < $minRatings ) {
 				$pParamHash['calc']['rating'] = 0;
 			} else {
