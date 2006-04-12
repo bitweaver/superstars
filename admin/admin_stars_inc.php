@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.7 2006/03/07 06:58:48 lsces Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.8 2006/04/12 14:32:47 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -76,6 +76,8 @@ if( !empty( $_REQUEST['stars_preferences'] ) ) {
 		} elseif( $data['type'] == 'toggle' ) {
 			simple_set_toggle( $item, STARS_PKG_NAME );
 		}
+		simple_set_int( 'stars_icon_width', STARS_PKG_NAME );
+		simple_set_int( 'stars_icon_height', STARS_PKG_NAME );
 	}
 	foreach( array_keys( $formRatable['guids'] ) as $ratable ) {
 		$gBitSystem->storeConfig( $ratable, ( ( !empty( $_REQUEST['ratable_content'] ) && in_array( $ratable, $_REQUEST['ratable_content'] ) ) ? 'y' : NULL ), STARS_PKG_NAME );

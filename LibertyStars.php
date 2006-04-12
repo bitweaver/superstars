@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.16 2006/04/12 12:48:13 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.17 2006/04/12 14:32:47 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.16 $ $Date: 2006/04/12 12:48:13 $
+* @version $Revision: 1.17 $ $Date: 2006/04/12 14:32:47 $
 * @class BitStars
 */
 
@@ -25,7 +25,7 @@ class LibertyStars extends LibertyBase {
 		if( $this->isValid() ) {
 			global $gBitSystem;
 			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
-			$pixels = $stars *  22;
+			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 		}
@@ -125,7 +125,7 @@ class LibertyStars extends LibertyBase {
 
 		if( @BitBase::verifyId( $pContentId ) ) {
 			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
-			$pixels = $stars *  22;
+			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT (`rating` * $pixels / 100) AS `stars_user_pixels`, ( `rating` * $stars / 100 ) AS `stars_user_rating` FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
 			$ret = $this->mDb->getRow( $query, array( $pContentId, $gBitUser->mUserId ) );
 		}
@@ -315,7 +315,7 @@ function stars_content_load_sql( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
-		$pixels = $stars *  22;
+		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 		$gBitSmarty->assign( 'loadAjax', TRUE );
 		$gBitSmarty->assign( 'loadStars', TRUE );

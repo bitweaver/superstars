@@ -20,6 +20,15 @@
 		{/foreach}
 
 		<div class="row">
+			{formlabel label="Icon Dimensions"}
+			{forminput}
+				{tr}width{/tr}: <input type="text" name="stars_icon_width" value="{$gBitSystem->getConfig('stars_icon_width')}" size="5" /> pixel<br />
+				{tr}height{/tr}: <input type="text" name="stars_icon_height" value="{$gBitSystem->getConfig('stars_icon_height')}" size="5" /> pixel
+				{formhelp note="Please enter the width and height of a single stars icon."}
+			{/forminput}
+		</div>
+
+		<div class="row">
 			{formlabel label="Ratable Content"}
 			{forminput}
 				{html_checkboxes options=$formRatable.guids value=y name=ratable_content separator="<br />" checked=$formRatable.checked}

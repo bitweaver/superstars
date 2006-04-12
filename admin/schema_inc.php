@@ -44,5 +44,7 @@ $gBitInstaller->registerPreferences( STARS_PKG_NAME, array(
 	array( STARS_PKG_NAME, "stars_weight_age", "1" ),
 	array( STARS_PKG_NAME, "stars_weight_permission", "1" ),
 	array( STARS_PKG_NAME, "stars_weight_activity", "1" ),
+	array( STARS_PKG_NAME, "stars_icon_width", "22" ),
+	array( STARS_PKG_NAME, "stars_icon_height", "22" ),
 ) );
 ?>
