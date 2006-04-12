@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.8 2006/04/12 14:32:47 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.9 2006/04/12 15:06:51 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -23,28 +23,28 @@ $formStarsOptions = array(
 //		'note' => 'If content is rated badly by the users, you can specify what the rating has to be before it is hidden. Enter a percentage rating: 0 disables the feature, 25 means that the average rating has to be below 25% before it is hidden.',
 //		'type' => 'input',
 //	),
-	"stars_rerating" => array(
-		'label' => 'Re- Ratings',
-		'note' => 'Allow users to change their ratings at any time. When content changes, users can update their rating accordingly.',
-		'type' => 'toggle',
-	),
+//	"stars_rerating" => array(
+//		'label' => 'Re- Ratings',
+//		'note' => 'Allow users to change their ratings at any time. When content changes, users can update their rating accordingly.',
+//		'type' => 'toggle',
+//	),
 );
 $gBitSmarty->assign( 'formStarsOptions', $formStarsOptions );
 
 $formStarsPoints = array(
 	"stars_user_points" => array(
 		'label' => 'Use weighting',
-		'note' => 'Value all users the same, regardless of any of the following factors.',
+		'note' => 'Give users individual weighting based on the factors below.',
 		'type' => 'toggle',
 	),
 	"stars_weight_age" => array(
 		'label' => 'Age weight',
-		'note' => 'How long a user has been a member of your site.',
+		'note' => 'How long a user has been a member of your site. This value is relative to the age of your site.',
 		'type' => 'numeric',
 	),
 	"stars_weight_permission" => array(
 		'label' => 'Permission weight',
-		'note' => 'Apply the importance of how much you think the priorities are worth.',
+		'note' => 'This calculation takes the number of permissions a user has into account..',
 		'type' => 'numeric',
 	),
 	"stars_weight_activity" => array(
