@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.17 2006/04/12 14:32:47 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.18 2006/04/18 07:25:54 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.17 $ $Date: 2006/04/12 14:32:47 $
+* @version $Revision: 1.18 $ $Date: 2006/04/18 07:25:54 $
 * @class BitStars
 */
 
@@ -234,8 +234,7 @@ class LibertyStars extends LibertyBase {
 				}
 			}
 
-			// we are adding the new rating here, so need to reduce this by one
-			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 ) - 1;
+			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
 			if( ( $calc['count'] + 1 ) < $minRatings ) {
 				$pParamHash['calc']['rating'] = 0;
 			} else {
