@@ -1,5 +1,5 @@
 <?php
-global $gBitSystem, $gBitSmarty;
+global $gBitSystem, $gBitSmarty, $gPreviewStyle;
 
 $registerHash = array(
 	'package_name' => 'stars',
@@ -10,6 +10,11 @@ $gBitSystem->registerPackage( $registerHash );
 
 if( $gBitSystem->isPackageActive( 'stars' ) ) {
 	require_once( STARS_PKG_PATH.'LibertyStars.php' );
+
+	// if we are using a text browser theme, make sure not to use ajax
+	if( $gPreviewStyle == 'lynx' ) {
+		$gBitSystem->setConfig( 'stars_use_ajax', FALSE );
+	}
 
 	$gLibertySystem->registerService( LIBERTY_SERVICE_RATING, STARS_PKG_NAME, array(
 //		'content_display_function'  => 'stars_content_display',

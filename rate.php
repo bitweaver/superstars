@@ -2,8 +2,8 @@
 require_once( "../bit_setup_inc.php" );
 $gBitSystem->verifyPackage( 'stars' );
 $starsfeed = array();
-if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['stars_rating'] ) ) {
-	if( $tmpObject = LibertyBase::getLibertyObject( $_POST['content_id'] ) ) {
+if( @BitBase::verifyId( $_REQUEST['content_id'] ) && @BitBase::verifyId( $_REQUEST['stars_rating'] ) ) {
+	if( $tmpObject = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {
 
 		// check if this feature allows rating
 		$gBitSystem->verifyFeature( 'stars_rate_'.$tmpObject->getContentType() );
@@ -15,7 +15,7 @@ if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['st
 		} else {
 			if( $tmpObject->isOwner() ) {
 				$starsfeed['error'] = tra( "You cannot rate your own content." );
-			} elseif( $stars->store( $_POST ) ) {
+			} elseif( $stars->store( $_REQUEST ) ) {
 				//$starsfeed['success'] = tra( "Thank you for rating." );
 			} else {
 				$starsfeed['error'] = $stars->mErrors;
@@ -30,5 +30,9 @@ if( @BitBase::verifyId( $_POST['content_id'] ) && @BitBase::verifyId( $_POST['st
 	$starsfeed['warning'] = tra( "There was a problem trying to apply your rating" );
 }
 $gBitSmarty->assign( "starsfeed", $starsfeed );
-echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
+if( $gBitSystem->isFeatureActive( 'stars_use_ajax' ) ) {
+	echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
+} else {
+	header( "Location:".$tmpObject->getDisplayUrl() );
+}
 ?>

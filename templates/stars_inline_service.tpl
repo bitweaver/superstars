@@ -10,7 +10,13 @@
 				<li class="stars-current" style="width:{$serviceHash.stars_pixels|default:0}px;">{if !$serviceHash.stars_user_pixels and $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}{tr}Rate{/tr}{else}{tr}{tr}Your rating:{/tr} {$serviceHash.stars_user_rating} / {$gBitSystem->getConfig('stars_used_in_display')}{/tr}{/if}</li>
 				{if !$serviceHash.stars_user_pixels and $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}
 					{foreach from=$starsLinks item=k key=rate}
-						<li><a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a></li>
+						<li>
+							{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
+								<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+							{else}
+								<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+							{/if}
+						</li>
 					{/foreach}
 				{/if}
 			</ul>
@@ -36,7 +42,11 @@
 				<li class="stars-current" style="width:{$serviceHash.stars_user_pixels|default:0}px;">{$current} / {$gBitSystem->getConfig('stars_used_in_display')} in {$serviceHash.stars_rating_count} {tr}votes{/tr}</li>
 				{if $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}
 					{foreach from=$starsLinks item=k key=rate}
-						<li><a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a></li>
+						{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
+							<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+						{else}
+							<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+						{/if}
 					{/foreach}
 				{/if}
 			</ul>
