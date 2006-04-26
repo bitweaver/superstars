@@ -10,7 +10,7 @@
 					{if $output.type == 'numeric'}
 						{html_options name="$item" values=$numbers output=$numbers selected=$gBitSystem->getConfig($item) labels=false id=$item}
 					{elseif $output.type == 'input'}
-						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystem->getConfig(stars_auto_hide,0)}" />
+						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystem->getConfig($item)}" />
 					{else}
 						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
 					{/if}
@@ -39,7 +39,7 @@
 
 	{legend legend="Weighting"}
 		{formhelp note="You can influence how much importance is put on either of the following values when a user rates content.<br />If you don't want to use a particular one, just set it to 0."}
-		{foreach from=$formStarsPoints key=item item=output}
+		{foreach from=$formStarsWeight key=item item=output}
 			<div class="row">
 				{formlabel label=`$output.label` for=$item}
 				{forminput}

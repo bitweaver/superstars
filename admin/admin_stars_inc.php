@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.10 2006/04/25 11:41:21 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.11 2006/04/26 16:32:00 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -23,7 +23,7 @@ $formStarsOptions = array(
 		'note' => 'Choosing this option will decrease load times when rating, however requires modern browsers with javascript enabled to allow for ratings.',
 		'type' => 'toggle',
 	),
-//	"stars_auto_hide" => array(
+//	"stars_auto_hide_content" => array(
 //		'label' => 'Auto Hide Content',
 //		'note' => 'If content is rated badly by the users, you can specify what the rating has to be before it is hidden. Enter a percentage rating: 0 disables the feature, 25 means that the average rating has to be below 25% before it is hidden.',
 //		'type' => 'input',
@@ -36,8 +36,8 @@ $formStarsOptions = array(
 );
 $gBitSmarty->assign( 'formStarsOptions', $formStarsOptions );
 
-$formStarsPoints = array(
-	"stars_user_points" => array(
+$formStarsWeight = array(
+	"stars_user_weight" => array(
 		'label' => 'Use weighting',
 		'note' => 'Give users individual weighting based on the factors below.',
 		'type' => 'toggle',
@@ -58,7 +58,7 @@ $formStarsPoints = array(
 		'type' => 'numeric',
 	),
 );
-$gBitSmarty->assign( 'formStarsPoints', $formStarsPoints );
+$gBitSmarty->assign( 'formStarsWeight', $formStarsWeight );
 
 for( $i = 0; $i <= 20; $i++ ) {
 	$numbers[] = $i;
@@ -74,12 +74,14 @@ foreach( $gLibertySystem->mContentTypes as $cType ) {
 }
 
 if( !empty( $_REQUEST['stars_preferences'] ) ) {
-	$stars = array_merge( $formStarsOptions, $formStarsPoints );
+	$stars = array_merge( $formStarsOptions, $formStarsWeight );
 	foreach( $stars as $item => $data ) {
 		if( $data['type'] == 'numeric' ) {
 			simple_set_int( $item, STARS_PKG_NAME );
 		} elseif( $data['type'] == 'toggle' ) {
 			simple_set_toggle( $item, STARS_PKG_NAME );
+		} elseif( $data['type'] == 'input' ) {
+			simple_set_value( $item, STARS_PKG_NAME );
 		}
 		simple_set_int( 'stars_icon_width', STARS_PKG_NAME );
 		simple_set_int( 'stars_icon_height', STARS_PKG_NAME );

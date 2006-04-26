@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.19 2006/04/25 11:41:21 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.20 2006/04/26 16:32:00 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.19 $ $Date: 2006/04/25 11:41:21 $
+* @version $Revision: 1.20 $ $Date: 2006/04/26 16:32:00 $
 * @class BitStars
 */
 
@@ -43,7 +43,7 @@ class LibertyStars extends LibertyBase {
 		}
 
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$query = "SELECT sth.`rating`, COUNT( sth.`rating`) AS `rating_count`, SUM( sth.`points` ) AS `points`
+			$query = "SELECT sth.`rating`, COUNT( sth.`rating`) AS `rating_count`, SUM( sth.`weight` ) AS `weight`
 				FROM `".BIT_DB_PREFIX."stars` sts
 				LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON( sth.`content_id`=sts.`content_id` )
 				WHERE sts.`content_id`=?
@@ -100,7 +100,7 @@ class LibertyStars extends LibertyBase {
 				$pParamHash['stars_store']['rating_count']        = ( int )$pParamHash['calc']['count'] + 1;
 				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = ( int )$this->mContentId;
 				$pParamHash['stars_history_store']['rating']      = ( int )$pParamHash['rating'];
-				$pParamHash['stars_history_store']['points']      = ( int )$pParamHash['user']['points'];
+				$pParamHash['stars_history_store']['weight']      = ( int )$pParamHash['user']['weight'];
 				$pParamHash['stars_history_store']['rating_time'] = ( int )BitDate::getUTCTime();
 				$pParamHash['stars_history_store']['user_id']     = ( int )$gBitUser->mUserId;
 			} else {
@@ -171,19 +171,19 @@ class LibertyStars extends LibertyBase {
 		$userIds = array_unique( $userIds );
 		$contentIds = array_unique( $contentIds );
 
-		// update user points in accordance with new settings
+		// update user weight in accordance with new settings
 		foreach( $userIds as $userId ) {
-			$userPoints = $this->calculateUserPoints( $userId );
-			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_history` SET `points`=? WHERE `user_id`=?", array( $userPoints, $userId ) );
+			$userWeight = $this->calculateUserWeight( $userId );
+			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_history` SET `weight`=? WHERE `user_id`=?", array( $userWeight, $userId ) );
 		}
 
 		// update the calculations in the stars table
 		foreach( $contentIds as $content_id ) {
-			$calc['sum'] = $calc['points'] = $calc['count'] = 0;
+			$calc['sum'] = $calc['weight'] = $calc['count'] = 0;
 			if( $summary = $this->getRatingSummary( $content_id ) ) {
 				foreach( $summary as $info ) {
-					$calc['sum']    += $info['points'] * $info['rating'];
-					$calc['points'] += $info['points'];
+					$calc['sum']    += $info['weight'] * $info['rating'];
+					$calc['weight'] += $info['weight'];
 					$calc['count']  += $info['rating_count'];
 				}
 			}
@@ -192,7 +192,7 @@ class LibertyStars extends LibertyBase {
 			if( $calc['count'] < $minRatings ) {
 				$rating = 0;
 			} else {
-				$rating = round( $calc['sum'] / $calc['points'] );
+				$rating = round( $calc['sum'] / $calc['weight'] );
 			}
 
 			$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars` SET `rating`=?, `rating_count`=? WHERE `content_id`=?", array( $rating, $calc['count'], $content_id ) );
@@ -214,7 +214,7 @@ class LibertyStars extends LibertyBase {
 
 		// number of ratings needed before value is displayed
 		if( @BitBase::verifyId( $pParamHash['stars_rating'] ) && $pParamHash['stars_rating'] > 0 && $pParamHash['stars_rating'] <= $stars && $this->isValid() ) {
-			// normalise to 100 points
+			// normalise to 100 weight
 			$pParamHash['rating'] = $pParamHash['stars_rating'] / $stars * 100;
 
 			// if the user is submitting his rating again, we need to update the value in the db before we get the summary
@@ -223,13 +223,13 @@ class LibertyStars extends LibertyBase {
 				$result = $this->mDb->associateUpdate( BIT_DB_PREFIX."stars_history", $tmpUpdate, array( "content_id" => $this->mContentId, "user_id" => $gBitUser->mUserId ) );
 			}
 
-			$pParamHash['user']['points'] = $this->calculateUserPoints();
-			$calc['sum'] = $calc['points'] = $calc['count'] = 0;
+			$pParamHash['user']['weight'] = $this->calculateUserWeight();
+			$calc['sum'] = $calc['weight'] = $calc['count'] = 0;
 			// the user rating has to be updated before we get the summary
 			if( $summary = $this->getRatingSummary() ) {
 				foreach( $summary as $info ) {
-					$calc['sum']    += $info['points'] * $info['rating'];
-					$calc['points'] += $info['points'];
+					$calc['sum']    += $info['weight'] * $info['rating'];
+					$calc['weight'] += $info['weight'];
 					$calc['count']  += $info['rating_count'];
 				}
 			}
@@ -238,7 +238,7 @@ class LibertyStars extends LibertyBase {
 			if( ( $calc['count'] + 1 ) < $minRatings ) {
 				$pParamHash['calc']['rating'] = 0;
 			} else {
-				$pParamHash['calc']['rating'] = round( ( $calc['sum'] + ( $pParamHash['rating'] * $pParamHash['user']['points'] ) ) / ( $calc['points'] + $pParamHash['user']['points'] ) );
+				$pParamHash['calc']['rating'] = round( ( $calc['sum'] + ( $pParamHash['rating'] * $pParamHash['user']['weight'] ) ) / ( $calc['weight'] + $pParamHash['user']['weight'] ) );
 			}
 			$pParamHash['calc']['count'] = $calc['count'];
 			$ret = TRUE;
@@ -246,9 +246,9 @@ class LibertyStars extends LibertyBase {
 		return $ret;
 	}
 
-	function calculateUserPoints( $pUserId = NULL ) {
+	function calculateUserWeight( $pUserId = NULL ) {
 		global $gBitUser, $gBitSystem;
-		if( $gBitSystem->isFeatureActive( 'stars_user_points' ) ) {
+		if( $gBitSystem->isFeatureActive( 'stars_user_weight' ) ) {
 
 			// allow overriding of currently loaded user
 			if( @BitBase::verifyId( $pUserId ) ) {
@@ -262,14 +262,14 @@ class LibertyStars extends LibertyBase {
 			$query = "SELECT MIN( `registration_date` ) FROM `".BIT_DB_PREFIX."users_users`";
 			$age['site'] = BitDate::getUTCTime() - $this->mDb->getOne( $query );
 			$age['user'] = BitDate::getUTCTime() - $tmpUser->getField( 'registration_date' );
-			$userPoints['age'] = $age['user'] / $age['site'];
+			$userWeight['age'] = $age['user'] / $age['site'];
 
 			// permissioning relative to full number of permissions
 			$query = "SELECT COUNT( `perm_name` ) FROM `".BIT_DB_PREFIX."users_permissions`";
 			if( $tmpUser->isAdmin() ) {
-				$userPoints['permission'] = 1;
+				$userWeight['permission'] = 1;
 			} else {
-				$userPoints['permission'] = count( $tmpUser->mPerms ) / $this->mDb->getOne( $query );
+				$userWeight['permission'] = count( $tmpUser->mPerms ) / $this->mDb->getOne( $query );
 			}
 
 			// activity - we could to the same using the history as well.
@@ -277,14 +277,14 @@ class LibertyStars extends LibertyBase {
 			$activity['user'] = $this->mDb->getOne( $query, array( $tmpUser->getField( 'user_id' ) ) );
 			$query = "SELECT COUNT( `content_id` ) FROM `".BIT_DB_PREFIX."liberty_content`";
 			$activity['site'] = $this->mDb->getOne( $query );
-			$userPoints['activity'] = $activity['user'] / $activity['site'];
+			$userWeight['activity'] = $activity['user'] / $activity['site'];
 
 			// here we can add some weight to various areas
 			$custom['age']        = $gBitSystem->getPreference( 'stars_weight_age' );
 			$custom['permission'] = $gBitSystem->getPreference( 'stars_weight_permission' );
 			$custom['activity']   = $gBitSystem->getPreference( 'stars_weight_activity' );
 
-			foreach( $userPoints as $type => $value ) {
+			foreach( $userWeight as $type => $value ) {
 				$$type = 10 * $value * $custom[$type];
 				if( empty( $$type ) ) {
 					$$type = 1;
@@ -312,10 +312,13 @@ function stars_content_list_sql( &$pObject ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		$gBitSmarty->assign( 'loadStars', TRUE );
-		return array(
-			'select_sql' => ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
-			'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
-		);
+		$ret['select_sql'] = ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
+			$ret['where_sql'] = " AND sts.`rating`>?";
+			$ret['bind_vars'] = array( $gBitSystem->getConfig( 'stars_auto_hide_content' ) );
+		}
+		return $ret;
 	}
 }
 
@@ -329,10 +332,13 @@ function stars_content_load_sql( &$pObject ) {
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 		$gBitSmarty->assign( 'loadStars', TRUE );
-		return array(
-			'select_sql' => ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ",
-			'join_sql' => " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )",
-		);
+		$ret['select_sql'] = ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
+			$ret['where_sql'] = " AND sts.`rating`>?";
+			$ret['bind_vars'] = array( $gBitSystem->getConfig( 'stars_auto_hide_content' ) );
+		}
+		return $ret;
 	}
 }
 
