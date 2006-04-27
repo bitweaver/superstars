@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.20 2006/04/26 16:32:00 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.21 2006/04/27 10:43:11 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.20 $ $Date: 2006/04/26 16:32:00 $
+* @version $Revision: 1.21 $ $Date: 2006/04/27 10:43:11 $
 * @class BitStars
 */
 
@@ -315,8 +315,9 @@ function stars_content_list_sql( &$pObject ) {
 		$ret['select_sql'] = ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
-			$ret['where_sql'] = " AND sts.`rating`>?";
-			$ret['bind_vars'] = array( $gBitSystem->getConfig( 'stars_auto_hide_content' ) );
+			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
+			$ret['bind_vars'][] = $gBitSystem->getConfig( 'stars_auto_hide_content' );
+			$ret['bind_vars'][] = 0;
 		}
 		return $ret;
 	}
@@ -335,8 +336,9 @@ function stars_content_load_sql( &$pObject ) {
 		$ret['select_sql'] = ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
-			$ret['where_sql'] = " AND sts.`rating`>?";
-			$ret['bind_vars'] = array( $gBitSystem->getConfig( 'stars_auto_hide_content' ) );
+			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
+			$ret['bind_vars'][] = $gBitSystem->getConfig( 'stars_auto_hide_content' );
+			$ret['bind_vars'][] = 0;
 		}
 		return $ret;
 	}
