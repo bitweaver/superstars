@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.22 2006/05/01 13:48:39 bitweaver Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.23 2006/05/01 16:35:18 bitweaver Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.22 $ $Date: 2006/05/01 13:48:39 $
+* @version $Revision: 1.23 $ $Date: 2006/05/01 16:35:18 $
 * @class BitStars
 */
 
@@ -311,6 +311,7 @@ function stars_content_list_sql( &$pObject ) {
 	if( $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
+		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
 		$gBitSmarty->assign( 'loadStars', TRUE );
 		$ret['select_sql'] = ", sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND sth.`user_id`='".$gBitUser->mUserId."' )";
