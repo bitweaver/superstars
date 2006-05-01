@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.21 2006/04/27 10:43:11 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.22 2006/05/01 13:48:39 bitweaver Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.21 $ $Date: 2006/04/27 10:43:11 $
+* @version $Revision: 1.22 $ $Date: 2006/05/01 13:48:39 $
 * @class BitStars
 */
 
@@ -124,7 +124,7 @@ class LibertyStars extends LibertyBase {
 		}
 
 		if( @BitBase::verifyId( $pContentId ) ) {
-			$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT (`rating` * $pixels / 100) AS `stars_user_pixels`, ( `rating` * $stars / 100 ) AS `stars_user_rating` FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=?";
 			$ret = $this->mDb->getRow( $query, array( $pContentId, $gBitUser->mUserId ) );
@@ -188,7 +188,7 @@ class LibertyStars extends LibertyBase {
 				}
 			}
 
-			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
+			$minRatings = $gBitSystem->getConfig( 'stars_minimum_ratings', 5 );
 			if( $calc['count'] < $minRatings ) {
 				$rating = 0;
 			} else {
@@ -205,7 +205,7 @@ class LibertyStars extends LibertyBase {
 	*/
 	function calculateRating( &$pParamHash ) {
 		global $gBitSystem, $gBitUser;
-		$stars = $gBitSystem->getPreference( 'stars_used_in_display', 5 );
+		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$ret = FALSE;
 
 		// TODO: factors that haven't been taken into accound yet:
@@ -234,7 +234,7 @@ class LibertyStars extends LibertyBase {
 				}
 			}
 
-			$minRatings = $gBitSystem->getPreference( 'stars_minimum_ratings', 5 );
+			$minRatings = $gBitSystem->getConfig( 'stars_minimum_ratings', 5 );
 			if( ( $calc['count'] + 1 ) < $minRatings ) {
 				$pParamHash['calc']['rating'] = 0;
 			} else {
@@ -280,9 +280,9 @@ class LibertyStars extends LibertyBase {
 			$userWeight['activity'] = $activity['user'] / $activity['site'];
 
 			// here we can add some weight to various areas
-			$custom['age']        = $gBitSystem->getPreference( 'stars_weight_age' );
-			$custom['permission'] = $gBitSystem->getPreference( 'stars_weight_permission' );
-			$custom['activity']   = $gBitSystem->getPreference( 'stars_weight_activity' );
+			$custom['age']        = $gBitSystem->getConfig( 'stars_weight_age' );
+			$custom['permission'] = $gBitSystem->getConfig( 'stars_weight_permission' );
+			$custom['activity']   = $gBitSystem->getConfig( 'stars_weight_activity' );
 
 			foreach( $userWeight as $type => $value ) {
 				$$type = 10 * $value * $custom[$type];
