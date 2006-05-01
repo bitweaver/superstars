@@ -34,5 +34,6 @@ if( $gBitSystem->isFeatureActive( 'stars_use_ajax' ) ) {
 	echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
 } else {
 	header( "Location:".$tmpObject->getDisplayUrl() );
+	die;
 }
 ?>
