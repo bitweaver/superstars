@@ -14,9 +14,9 @@
 					{foreach from=$starsLinks item=k key=rate}
 						<li>
 							{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-								<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+								<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Rating{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
 							{else}
-								<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+								<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Rating{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
 							{/if}
 						</li>
 					{/foreach}
@@ -45,9 +45,9 @@
 				{if $gBitUser->isRegistered() && $gBitUser->mUserId != $serviceHash.user_id}
 					{foreach from=$starsLinks item=k key=rate}
 						{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-							<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+							<a href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Rating{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
 						{else}
-							<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Stars{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
+							<a href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Rating{/tr}: {$rate}" class="stars-{$rate}">{$rate}</a>
 						{/if}
 					{/foreach}
 				{/if}
