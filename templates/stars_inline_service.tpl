@@ -1,10 +1,10 @@
 {strip}
-{if $serviceHash.stars_rating}
-	{math equation="rating * stars / 100" stars=$gBitSystem->getConfig('stars_used_in_display') rating=$serviceHash.stars_rating format="%.1f" assign=current}
-{/if}
-{if $loadStars}
+{if $serviceHash.stars_load}
 	{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
 		<script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
+	{/if}
+	{if $serviceHash.stars_rating}
+		{math equation="rating * stars / 100" stars=$gBitSystem->getConfig('stars_used_in_display') rating=$serviceHash.stars_rating format="%.1f" assign=current}
 	{/if}
 	<div class="stars-container" id="stars-{$serviceHash.content_id}">
 		{if $gBitUser->isRegistered() || $serviceHash.stars_pixels}
