@@ -4,19 +4,18 @@ $gBitSystem->verifyPackage( 'stars' );
 $starsfeed = array();
 if( @BitBase::verifyId( $_REQUEST['content_id'] ) && @BitBase::verifyId( $_REQUEST['stars_rating'] ) ) {
 	if( $tmpObject = LibertyBase::getLibertyObject( $_REQUEST['content_id'] ) ) {
-
 		// check if this feature allows rating
-		$gBitSystem->verifyFeature( 'stars_rate_'.$tmpObject->getContentType() );
-
-		$starsfeed = array();
-		$stars = new LibertyStars( $tmpObject->mContentId );
-		if( !$gBitUser->isRegistered() ) {
-			$starsfeed['error'] = tra( "You need to log in to rate." );
-		} else {
-			if( $stars->store( $_REQUEST ) ) {
-				//$starsfeed['success'] = tra( "Thank you for rating." );
+		if( $gBitSystem->isFeatureActive( 'stars_rate_'.$tmpObject->getContentType() ) ) {
+			$starsfeed = array();
+			$stars = new LibertyStars( $tmpObject->mContentId );
+			if( !$gBitUser->isRegistered() ) {
+				$starsfeed['error'] = tra( "You need to log in to rate." );
 			} else {
-				$starsfeed['error'] = $stars->mErrors;
+				if( $stars->store( $_REQUEST ) ) {
+					//$starsfeed['success'] = tra( "Thank you for rating." );
+				} else {
+					$starsfeed['error'] = $stars->mErrors;
+				}
 			}
 		}
 	}
