@@ -13,9 +13,7 @@ if( @BitBase::verifyId( $_REQUEST['content_id'] ) && @BitBase::verifyId( $_REQUE
 		if( !$gBitUser->isRegistered() ) {
 			$starsfeed['error'] = tra( "You need to log in to rate." );
 		} else {
-			if( $tmpObject->isOwner() ) {
-				$starsfeed['error'] = tra( "You cannot rate your own content." );
-			} elseif( $stars->store( $_REQUEST ) ) {
+			if( $stars->store( $_REQUEST ) ) {
 				//$starsfeed['success'] = tra( "Thank you for rating." );
 			} else {
 				$starsfeed['error'] = $stars->mErrors;
