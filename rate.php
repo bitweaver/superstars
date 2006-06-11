@@ -27,7 +27,8 @@ if( @BitBase::verifyId( $_REQUEST['content_id'] ) && @BitBase::verifyId( $_REQUE
 	$starsfeed['warning'] = tra( "There was a problem trying to apply your rating" );
 }
 $gBitSmarty->assign( "starsfeed", $starsfeed );
-if( $gBitSystem->isFeatureActive( 'stars_use_ajax' ) ) {
+
+if( $gBitSystem->isAjaxRequest() ) {
 	echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
 } else {
 	header( "Location:".$tmpObject->getDisplayUrl() );
