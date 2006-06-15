@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.12 2006/05/12 18:25:54 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.13 2006/06/15 13:15:18 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -66,7 +66,7 @@ for( $i = 0; $i <= 20; $i++ ) {
 $gBitSmarty->assign( 'numbers', $numbers );
 
 // allow selection of what packages can have ratings
-$exclude = array( 'bituser', 'tikisticky' );
+$exclude = array( 'bituser', 'tikisticky', 'pigeonholes' );
 foreach( $gLibertySystem->mContentTypes as $cType ) {
 	if( !in_array( $cType['content_type_guid'], $exclude ) ) {
 		$formRatable['guids']['stars_rate_'.$cType['content_type_guid']]  = $cType['content_description'];
@@ -100,7 +100,7 @@ if( !empty( $_REQUEST['recalculate'] ) ) {
 	}
 }
 
-// allow selection of what packages can have ratings
+// check the correct packages in the package selection
 foreach( $gLibertySystem->mContentTypes as $cType ) {
 	if( $gBitSystem->getConfig( 'stars_rate_'.$cType['content_type_guid'] ) ) {
 		$formRatable['checked'][] = 'stars_rate_'.$cType['content_type_guid'];
