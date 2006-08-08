@@ -14,7 +14,7 @@
 			</tr>
 
 			{foreach from=$ratedContent item=item}
-				<tr>
+				<tr class="{cycle values="odd,even"}">
 					<td>{$item.display_link}</td>
 					<td>{$item.content_type_guid}</td>
 					<td style="text-align:right;">{$item.rating_count}</td>
