@@ -51,9 +51,9 @@
 				{formlabel label="Users who have rated"}
 				{forminput}
 					{if $smarty.request.show_raters}
-						<ul>
+						<ul class="data">
 							{foreach from=$starsDetails.user_ratings item=user}
-								<li class="{cycle values="odd,even"}">
+								<li class="item {cycle values="odd,even"}">
 									{displayname hash=$user} <small>({tr}weighting{/tr}: {$user.weight})</small> &bull; {$user.rating} / 100
 								</li>
 							{/foreach}

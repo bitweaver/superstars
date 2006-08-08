@@ -24,5 +24,6 @@
 				</tr>
 			{/foreach}
 		</table>
+		{pagination}
 	</div><!-- end .body -->
 </div><!-- end .stars -->

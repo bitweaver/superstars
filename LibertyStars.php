@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.25 2006/08/08 10:27:11 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.26 2006/08/08 10:41:59 bitweaver Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.25 $ $Date: 2006/08/08 10:27:11 $
+* @version $Revision: 1.26 $ $Date: 2006/08/08 10:41:59 $
 * @class BitStars
 */
 
@@ -112,8 +112,8 @@ class LibertyStars extends LibertyBase {
 				$query = "SELECT sth.`content_id` as `hash_key`, sth.*, uu.`login`, uu.`real_name`
 					FROM `".BIT_DB_PREFIX."stars_history` sth
 						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON sth.`user_id`=uu.`user_id`
-					WHERE sth.`content_id`=?";
-				$this->mInfo['user_ratings'] = $this->mDb->getAssoc( $query, array( $this->mContentId ) );
+					WHERE sth.`content_id`=? ORDER BY sth.`rating` ASC";
+				$this->mInfo['user_ratings'] = $this->mDb->getAll( $query, array( $this->mContentId ) );
 			}
 		}
 		return( count( $this->mInfo ) );
