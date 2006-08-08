@@ -66,4 +66,5 @@
 		</div>
 	{/legend}
 {/form}
+{smartlink ititle="View a list of rated content" ipackage=stars ifile="index.php"}
 {/strip}

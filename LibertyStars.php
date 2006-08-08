@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.24 2006/05/03 13:20:59 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.25 2006/08/08 10:27:11 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.24 $ $Date: 2006/05/03 13:20:59 $
+* @version $Revision: 1.25 $ $Date: 2006/08/08 10:27:11 $
 * @class BitStars
 */
 
@@ -28,6 +28,93 @@ class LibertyStars extends LibertyBase {
 			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
+		}
+		return( count( $this->mInfo ) );
+	}
+
+	/**
+	* get list of all rated content
+	* @param $pListHash contains array of items used to limit search results
+	* @param $pListHash[sort_mode] column and orientation by which search results are sorted
+	* @param $pListHash[find] search for a pigeonhole title - case insensitive
+	* @param $pListHash[max_records] maximum number of rows to return
+	* @param $pListHash[offset] number of results data is offset by
+	* @access public
+	* @return array of rated content
+	**/
+	function getList( &$pListHash ) {
+		global $gBitSystem, $gBitUser, $gLibertySystem;
+
+		$ret = $bindVars = array();
+		$where = $order = '';
+
+		if( !empty( $pListHash['sort_mode'] ) ) {
+			$order .= " ORDER BY ".$this->mDb->convert_sortmode( $pListHash['sort_mode'] )." ";
+		} else {
+			// set a default sort_mode
+			$order .= " ORDER BY sts.`rating` DESC";
+		}
+
+		LibertyContent::prepGetList( $pListHash );
+
+		if( !empty( $pListHash['find'] ) ) {
+			$where .= empty( $where ) ? ' WHERE ' : ' AND ';
+			$where .= " UPPER( lc.`title` ) LIKE ? ";
+			$bindVars[] = '%'.strtoupper( $pListHash['find'] ).'%';
+		}
+
+		$query = "SELECT sts.*, lc.`hits`, lc.`last_hit`, lc.`event_time`, lc.`title`,
+			lc.`last_modified`, lc.`content_type_guid`, lc.`ip`, lc.`created`
+			FROM `".BIT_DB_PREFIX."stars` sts
+				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = sts.`content_id` )
+			$where $order";
+
+		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
+
+		while( $aux = $result->fetchRow() ) {
+			$type = &$gLibertySystem->mContentTypes[$aux['content_type_guid']];
+			if( empty( $type['content_object'] ) ) {
+				include_once( $gBitSystem->mPackages[$type['handler_package']]['path'].$type['handler_file'] );
+				$type['content_object'] = new $type['handler_class']();
+			}
+			if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
+				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
+				$aux['title']        = $type['content_object']->getTitle( $aux );
+				$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
+			}
+			$ret[] = $aux;
+		}
+
+		$query = "SELECT COUNT( sts.`content_id` ) FROM `".BIT_DB_PREFIX."stars` sts $where";
+		$pListHash['cant'] = $this->mDb->getOne( $query, $bindVars );
+
+		LibertyContent::postGetList( $pListHash );
+		return $ret;
+	}
+
+	/**
+	 * Get the rating history of a loaded content
+	 * 
+	 * @param boolean $pExtras loading the extras will get all users who have rated in the past and their ratings
+	 * @access public
+	 * @return TRUE on success, FALSE on failure
+	 */
+	function getRatingDetails( $pExtras = FALSE ) {
+		if( $this->isValid() ) {
+			global $gBitSystem;
+			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
+			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
+			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
+			$obj = $this->getLibertyObject( $this->mContentId );
+			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
+			$this->mInfo = array_merge( $this->mInfo, $obj->mInfo );
+			if( $pExtras ) {
+				$query = "SELECT sth.`content_id` as `hash_key`, sth.*, uu.`login`, uu.`real_name`
+					FROM `".BIT_DB_PREFIX."stars_history` sth
+						INNER JOIN `".BIT_DB_PREFIX."users_users` uu ON sth.`user_id`=uu.`user_id`
+					WHERE sth.`content_id`=?";
+				$this->mInfo['user_ratings'] = $this->mDb->getAssoc( $query, array( $this->mContentId ) );
+			}
 		}
 		return( count( $this->mInfo ) );
 	}
