@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.27 2006/08/18 13:02:11 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.28 2006/08/20 23:34:54 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.27 $ $Date: 2006/08/18 13:02:11 $
+* @version $Revision: 1.28 $ $Date: 2006/08/20 23:34:54 $
 * @class BitStars
 */
 
@@ -67,7 +67,7 @@ class LibertyStars extends LibertyBase {
 			lc.`last_modified`, lc.`content_type_guid`, lc.`ip`, lc.`created`
 			FROM `".BIT_DB_PREFIX."stars` sts
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = sts.`content_id` )
-				INNER JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON ( lc.`content_id` = lch.`content_id` )
+				LEFT JOIN `".BIT_DB_PREFIX."liberty_content_hits` lch ON ( lc.`content_id` = lch.`content_id` )
 			$where $order";
 
 		$result = $this->mDb->query( $query, $bindVars, $pListHash['max_records'], $pListHash['offset'] );
