@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.13 2006/06/15 13:15:18 squareing Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.14 2006/08/21 11:34:32 hash9 Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -31,6 +31,11 @@ $formStarsOptions = array(
 	"stars_rerating" => array(
 		'label' => 'Re- Ratings',
 		'note' => 'Allow users to change their ratings at any time. When content changes, users can update their rating accordingly.',
+		'type' => 'toggle',
+	),
+	"stars_user_ratings" => array(
+		'label' => 'User Ratings',
+		'note' => 'Show the average rating of a users contributions on thier homepage',
 		'type' => 'toggle',
 	),
 );

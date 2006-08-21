@@ -4,10 +4,20 @@ $tables = array(
 		content_id I4 NOTNULL,
 		rating_count I4,
 		rating I4
-		CONSTRAINT ', CONSTRAINT `stars_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+		CONSTRAINT '
+			, CONSTRAINT `stars_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
+	",
+	'stars_version' => "
+		content_id I4 NOTNULL,
+		version I4 NOTNULL,
+		rating_count I4,
+		rating I4
+		CONSTRAINT '
+			, CONSTRAINT `stars_version_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 	",
 	'stars_history' => "
 		content_id I4 NOTNULL,
+		version I4 NOTNULL,
 		user_id I4 NOTNULL,
 		rating I4 NOTNULL,
 		weight I4 NOTNULL,
