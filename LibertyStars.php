@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.29 2006/08/21 11:34:32 hash9 Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.30 2006/08/28 01:34:48 jht001 Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.29 $ $Date: 2006/08/21 11:34:32 $
+* @version $Revision: 1.30 $ $Date: 2006/08/28 01:34:48 $
 * @class BitStars
 */
 
@@ -195,13 +195,14 @@ class LibertyStars extends LibertyBase {
 			//$this->mDb->rollBackTrans();
 			$this->mDb->CompleteTrans();
 			global $gLibertySystem;
+/* apparently unused 
 			$pHash = array(
 			'stars_rating'=>$pParamHash['stars_store']['rating'],
 			'stars_rating_count'=>$pParamHash['stars_store']['rating_count'],
 			'v_gstars_rating'=>$pParamHash['stars_version_store']['rating'],
 			'stars_version_rating_count'=>$pParamHash['stars_version_store']['rating_count']
 			);
-
+*/
 			if( $loadFuncs = $gLibertySystem->getServiceValues( 'content_rating_updated_function' ) ) {
 				foreach( $loadFuncs as $func ) {
 					if( function_exists( $func ) ) {
@@ -555,13 +556,27 @@ class LibertyStars extends LibertyBase {
 
 /********* SERVICE FUNCTIONS *********/
 
+function stars_template_setup ($pStars) {
+		global $gBitSystem, $gBitUser, $gBitSmarty;
+		$default_names = array();
+		for($i=0;$i<$pStars;$i++) {
+			$default_names[] = tra("Rating") . ":" . ($i+1);
+			}
+		$default_names_flat = implode(",", $default_names);	
+		$ratingNames = explode(",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
+		$gBitSmarty->assign( 'ratingNames', $ratingNames);
+		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
+		$gBitSmarty->assign( 'loadStars', TRUE );
+
+}
+
 function stars_content_list_sql( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
+
 	if(!method_exists($pObject,'getContentType') || $pObject->getContentType()==null || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) )  {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
-		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
-		$gBitSmarty->assign( 'loadStars', TRUE );
+		stars_template_setup($stars);
 		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		$ret['select_sql'] .= ",
@@ -590,8 +605,7 @@ function stars_list_history_sql_function( &$pObject ) {
 	if(!method_exists($pObject,'getContentType') || ($pObject->getContentType()==null) || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
-		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
-		$gBitSmarty->assign( 'loadStars', TRUE );
+		stars_template_setup($stars);
 		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		$ret['select_sql'] .= ",
@@ -623,8 +637,7 @@ function stars_content_load_sql( &$pObject ) {
 		}
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
-		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $stars, 1 ) );
-		$gBitSmarty->assign( 'loadStars', TRUE );
+		stars_template_setup($stars);
 		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 
@@ -666,7 +679,7 @@ function stars_content_get_rating($pContentId) {
 	return $lHash;
 }
 
-function stars_content_get_rating_feild($pVerFeild=false,$pCountFeild=false,$pSQL=false,&$pObject=null) {
+function stars_content_get_rating_feild($pVerFeild=false,$pCountFeild=false,$pSQL=false,&$pObject) {
 	global $gBitSystem;
 	if($pObject==null || !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		if ($pSQL) {

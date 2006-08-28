@@ -20,6 +20,14 @@
 		{/foreach}
 
 		<div class="row">
+			{formlabel label="Rating Names"}
+			{forminput}
+				<input type="text" name="stars_rating_names" value="{$gBitSystem->getConfig('stars_rating_names')}" size="70" /><br />
+				{formhelp note="Comma separated list of rating names.  Example: bad,better,best  Default is: Rating: 1, Rating: 2, ...  These names pop up when the mouse hovers over the corresponding star."}
+			{/forminput}
+		</div>
+
+		<div class="row">
 			{formlabel label="Icon Dimensions"}
 			{forminput}
 				{tr}width{/tr}: <input type="text" name="stars_icon_width" value="{$gBitSystem->getConfig('stars_icon_width')}" size="5" /> pixel<br />

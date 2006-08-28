@@ -3,6 +3,7 @@
 	{if $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
 		<script type="text/javascript">/*<![CDATA[*/ show_spinner('spinner'); /*]]>*/</script>
 	{/if}
+    {* stars-container is not defined elsewhere *}
 	<div class="stars-container" id="stars-{$serviceHash.content_id}">
 		<table>
 		<tr>
@@ -11,13 +12,14 @@
 				<li class="stars-current" style="width:{$serviceHash.stars_version_pixels|default:0}px;">{if $serviceHash.stars_user_pixels}{tr}Your rating:{/tr} {$serviceHash.stars_user_rating} / {$gBitSystem->getConfig('stars_used_in_display')}{else}{tr}Rate{/tr}{/if}</li>
 				{if (!$serviceHash.stars_version_user_rating || $gBitSystem->isFeatureActive( "stars_rerating" )) && $gBitUser->isRegistered()}
 					{foreach from=$starsLinks item=k key=rate}
+						{assign var=rname value=$ratingNames.$rate}
 						<li>
 							{if !$gBitUser->isRegistered()}
 								<a class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
 							{elseif $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-								<a class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Rating{/tr}: {$rate}">{$rate}</a>
+								<a class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
 							{else}
-								<a class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Rating{/tr}: {$rate}">{$rate}</a>
+								<a class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
 							{/if}
 						</li>
 					{/foreach}
@@ -29,13 +31,14 @@
 				<li class="stars-current" style="width:{$serviceHash.stars_pixels|default:0}px;">{if $serviceHash.stars_user_pixels}{tr}Your rating:{/tr} {$serviceHash.stars_user_rating} / {$gBitSystem->getConfig('stars_used_in_display')}{else}{tr}Rate{/tr}{/if}</li>
 				{if (!$serviceHash.stars_user_rating || $gBitSystem->isFeatureActive( "stars_rerating" )) && $gBitUser->isRegistered()}
 					{foreach from=$starsLinks item=k key=rate}
+						{assign var=rname value=$ratingNames.$rate}
 						<li>
 							{if !$gBitUser->isRegistered()}
 								<a class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
 							{elseif $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-								<a class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{tr}Rating{/tr}: {$rate}">{$rate}</a>
+								<a class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
 							{else}
-								<a class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{tr}Rating{/tr}: {$rate}">{$rate}</a>
+								<a class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
 							{/if}
 						</li>
 					{/foreach}

@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.14 2006/08/21 11:34:32 hash9 Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.15 2006/08/28 01:34:48 jht001 Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -90,6 +90,8 @@ if( !empty( $_REQUEST['stars_preferences'] ) ) {
 		}
 		simple_set_int( 'stars_icon_width', STARS_PKG_NAME );
 		simple_set_int( 'stars_icon_height', STARS_PKG_NAME );
+		simple_set_value( 'stars_rating_names', STARS_PKG_NAME );
+
 	}
 	foreach( array_keys( $formRatable['guids'] ) as $ratable ) {
 		$gBitSystem->storeConfig( $ratable, ( ( !empty( $_REQUEST['ratable_content'] ) && in_array( $ratable, $_REQUEST['ratable_content'] ) ) ? 'y' : NULL ), STARS_PKG_NAME );
