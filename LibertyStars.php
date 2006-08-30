@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.33 2006/08/30 16:26:22 hash9 Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.34 2006/08/30 18:10:34 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.33 $ $Date: 2006/08/30 16:26:22 $
+* @version $Revision: 1.34 $ $Date: 2006/08/30 18:10:34 $
 * @class BitStars
 */
 
@@ -679,32 +679,32 @@ function stars_content_get_rating($pContentId) {
 	return $lHash;
 }
 
-function stars_content_get_rating_feild(&$pObject,$pVerFeild=false,$pCountFeild=false,$pSQL=false) {
+function stars_content_get_rating_field(&$pObject,$pVerField=FALSE,$pCountField=FALSE,$pSQL=FALSE) {
 	global $gBitSystem;
-	if($gBitSystem->isPackageActive('stars') && ($pObject==null || !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) ) {
+	if($gBitSystem->isPackageActive('stars') && ($pObject==NULL || !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) ) {
 		if ($pSQL) {
-			if ($pCountFeild) {
-				if ($pVerFeild) {
+			if ($pCountField) {
+				if ($pVerField) {
 					return 'sts.`rating_count`';
 				}
 				return  'sts.`rating_count`';
-			} elseif ($pVerFeild) {
+			} elseif ($pVerField) {
 				return 'v_sts.`rating`';
 			}
 			return 'sts.`rating`';
 		} else {
-			if ($pCountFeild) {
-				if ($pVerFeild) {
+			if ($pCountField) {
+				if ($pVerField) {
 					return 'stars_version_rating_count';
 				}
 				return  'stars_rating_count';
-			} elseif ($pVerFeild) {
+			} elseif ($pVerField) {
 				return 'stars_version_rating';
 			}
 			return 'stars_rating';
 		}
 	}
-	return null;
+	return NULL;
 }
 
 function stars_content_set_rating($pContentId,$pRating) {
