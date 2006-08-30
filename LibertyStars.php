@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.31 2006/08/29 16:34:50 hash9 Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.32 2006/08/30 16:12:11 hash9 Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.31 $ $Date: 2006/08/29 16:34:50 $
+* @version $Revision: 1.32 $ $Date: 2006/08/30 16:12:11 $
 * @class BitStars
 */
 
@@ -681,13 +681,13 @@ function stars_content_get_rating($pContentId) {
 
 function stars_content_get_rating_feild($pVerFeild=false,$pCountFeild=false,$pSQL=false,&$pObject=null) {
 	global $gBitSystem;
-	if($pObject==null || !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
+	if($gBitSystem->isPackageActive('stars') && ($pObject==null || !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) ) {
 		if ($pSQL) {
 			if ($pCountFeild) {
 				if ($pVerFeild) {
 					return 'sts.`rating_count`';
 				}
-				return  'sts.`rating_count';
+				return  'sts.`rating_count`';
 			} elseif ($pVerFeild) {
 				return 'v_sts.`rating`';
 			}
