@@ -30,9 +30,9 @@
 		<div class="row">
 			{formlabel label="Icon Dimensions"}
 			{forminput}
-				{tr}width{/tr}: <input type="text" name="stars_icon_width" value="{$gBitSystem->getConfig('stars_icon_width')}" size="5" /> pixel<br />
-				{tr}height{/tr}: <input type="text" name="stars_icon_height" value="{$gBitSystem->getConfig('stars_icon_height')}" size="5" /> pixel
-				{formhelp note="Please enter the width and height of a single stars icon."}
+				{tr}Width{/tr}: <input type="text" name="stars_icon_width" value="{$gBitSystem->getConfig('stars_icon_width')}" size="5" /> {tr}pixels{/tr}<br />
+				{tr}Height{/tr}: <input type="text" name="stars_icon_height" value="{$gBitSystem->getConfig('stars_icon_height')}" size="5" /> {tr}pixels{/tr}
+				{formhelp note="Please enter the width and height of a single star."}
 			{/forminput}
 		</div>
 
@@ -43,6 +43,31 @@
 				{formhelp note="Here you can select what content can be rated."}
 			{/forminput}
 		</div>
+
+		<div class="row">
+			{formlabel label="Rated Content" for=""}
+			{forminput}
+				{smartlink ititle="View a list of rated content" ipackage=stars ifile="index.php"}
+			{/forminput}
+		</div>
+	{/legend}
+
+	{legend legend="Version Rating"}
+		{foreach from=$formStarsVersion key=item item=output}
+			<div class="row">
+				{formlabel label=`$output.label` for=$item}
+				{forminput}
+					{if $output.type == 'numeric'}
+						{html_options name="$item" values=$numbers output=$numbers selected=$gBitSystem->getConfig($item) labels=false id=$item}
+					{elseif $output.type == 'input'}
+						<input type='text' name="{$item}" id="{$item}" value="{$gBitSystem->getConfig($item)}" />
+					{else}
+						{html_checkboxes name="$item" values="y" checked=$gBitSystem->getConfig($item) labels=false id=$item}
+					{/if}
+					{formhelp note=`$output.note` page=`$output.page`}
+				{/forminput}
+			</div>
+		{/foreach}
 	{/legend}
 
 	{legend legend="Weighting"}
@@ -74,5 +99,4 @@
 		</div>
 	{/legend}
 {/form}
-{smartlink ititle="View a list of rated content" ipackage=stars ifile="index.php"}
 {/strip}

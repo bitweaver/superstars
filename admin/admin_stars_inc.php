@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.15 2006/08/28 01:34:48 jht001 Exp $
+// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.16 2006/09/06 06:48:36 squareing Exp $
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See copyright.txt for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See license.txt for details.
@@ -40,6 +40,15 @@ $formStarsOptions = array(
 	),
 );
 $gBitSmarty->assign( 'formStarsOptions', $formStarsOptions );
+
+$formStarsVersion = array(
+	"stars_per_version_rating" => array(
+		'label' => 'Display version rating',
+		'note' => 'Display the rating based on the actual version of the content in addition to the overall rating.',
+		'type' => 'toggle',
+	),
+);
+$gBitSmarty->assign( 'formStarsVersion', $formStarsVersion );
 
 $formStarsWeight = array(
 	"stars_user_weight" => array(

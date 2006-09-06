@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.34 2006/08/30 18:10:34 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.35 2006/09/06 06:48:36 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.34 $ $Date: 2006/08/30 18:10:34 $
+* @version $Revision: 1.35 $ $Date: 2006/09/06 06:48:36 $
 * @class BitStars
 */
 
@@ -28,7 +28,7 @@ class LibertyStars extends LibertyBase {
 			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
-			if (!empty($this->mInfo)) {
+			if( !empty( $this->mInfo ) && $gBitSystem->isFeatureActive( 'stars_per_version_rating' ) ) {
 				$this->mInfo['c_version'] = $this->getCurrentVersion( $this->mContentId );
 
 				$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_version_pixels`, `rating` AS `stars_version_rating`, `rating_count` AS `stars_version_rating_count` FROM `".BIT_DB_PREFIX."stars_version` WHERE `content_id`=? AND `version`=?";
@@ -39,7 +39,7 @@ class LibertyStars extends LibertyBase {
 		return( count( $this->mInfo ) );
 	}
 
-	function getCurrentVersion($pContentId) {
+	function getCurrentVersion( $pContentId ) {
 		$query = "SELECT version FROM `".BIT_DB_PREFIX."liberty_content` WHERE `content_id`=?";
 		return ($this->mDb->getOne( $query, array( $this->mContentId ) ));
 	}
@@ -136,7 +136,7 @@ class LibertyStars extends LibertyBase {
 	* quick method to get a nice summary of past ratings for a given content
 	* @return usable hash with a summary of ratings of a given content id
 	*/
-	function getRatingSummary( $pContentId = NULL , $pVersion = null ) {
+	function getRatingSummary( $pContentId = NULL , $pVersion = NULL ) {
 		$ret = FALSE;
 		if( !@BitBase::verifyId( $pContentId ) && $this->isValid() ) {
 			$pContentId = $this->mContentId;
@@ -234,19 +234,17 @@ class LibertyStars extends LibertyBase {
 				} else {
 					$c_version = $this->mInfo['c_version'];
 				}
-				$pParamHash['stars_store']['rating']              = ( int )$pParamHash['calc']['rating'];
-				$pParamHash['stars_store']['rating_count']        = ( int )$pParamHash['calc']['count'] + 1;
-				$pParamHash['stars_version_store']['rating']              = ( int )$pParamHash['v_calc']['rating'];
-				$pParamHash['stars_version_store']['rating_count']        = ( int )$pParamHash['v_calc']['count'] + 1;
-				$pParamHash['stars_version_store']['version']			  = $c_version;
-				$pParamHash['stars_history_store']['content_id']  = $pParamHash['stars_store']['content_id'] = $pParamHash['stars_version_store']['content_id'] = ( int )$this->mContentId;
-				$pParamHash['stars_history_store']['rating']      = ( int )$pParamHash['rating'];
-				$pParamHash['stars_history_store']['weight']      = ( int )$pParamHash['user']['weight'];
-				$pParamHash['stars_history_store']['rating_time'] = ( int )BitDate::getUTCTime();
-				$pParamHash['stars_history_store']['user_id']     = ( int )$gBitUser->mUserId;
-
-
-				$pParamHash['stars_history_store']['version']			  = $c_version;
+				$pParamHash['stars_store']['rating']                = ( int )$pParamHash['calc']['rating'];
+				$pParamHash['stars_store']['rating_count']          = ( int )$pParamHash['calc']['count'] + 1;
+				$pParamHash['stars_version_store']['rating']        = ( int )$pParamHash['v_calc']['rating'];
+				$pParamHash['stars_version_store']['rating_count']  = ( int )$pParamHash['v_calc']['count'] + 1;
+				$pParamHash['stars_version_store']['version']       = $c_version;
+				$pParamHash['stars_history_store']['content_id']    = $pParamHash['stars_store']['content_id'] = $pParamHash['stars_version_store']['content_id'] = ( int )$this->mContentId;
+				$pParamHash['stars_history_store']['rating']        = ( int )$pParamHash['rating'];
+				$pParamHash['stars_history_store']['weight']        = ( int )$pParamHash['user']['weight'];
+				$pParamHash['stars_history_store']['rating_time']   = ( int )BitDate::getUTCTime();
+				$pParamHash['stars_history_store']['user_id']       = ( int )$gBitUser->mUserId;
+				$pParamHash['stars_history_store']['version']       = $c_version;
 			} else {
 				$this->mErrors['calculate_rating'] = "There was a problem calculating the rating.";
 			}
@@ -274,7 +272,7 @@ class LibertyStars extends LibertyBase {
 
 			$query = "SELECT (`rating` * $pixels / 100) AS `stars_user_pixels`, ( `rating` * $stars / 100 ) AS `stars_user_rating` FROM `".BIT_DB_PREFIX."stars_history` WHERE `content_id`=? AND `user_id`=? AND `version`=?";
 			$ret = $this->mDb->getRow( $query, array( $pContentId, $gBitUser->mUserId, $c_version ) );
-			if(!empty($ret['stars_user_rating'])) {
+			if( !empty( $ret['stars_user_rating'] ) ) {
 				$ret['stars_version_user_rating'] = $ret['stars_user_rating'];
 				$ret['stars_version_user_pixels'] = $ret['stars_user_pixels'];
 			}
@@ -382,7 +380,7 @@ class LibertyStars extends LibertyBase {
 	/**
 	* calculate the correct value to insert into the database
 	*/
-	function calculateRating( &$pParamHash , $ro = false ) {
+	function calculateRating( &$pParamHash , $ro = FALSE ) {
 		global $gBitSystem, $gBitUser;
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$ret = FALSE;
@@ -504,7 +502,7 @@ class LibertyStars extends LibertyBase {
 			}
 
 			// TODO: run some tests to see if this is a good way of evaluating power of a user
-			// ensure that we always have a positive number here to avoid chaos - this alse makes sure new users have at least a bit of a say
+			// ensure that we always have a positive number here to avoid chaos - this also makes sure new users have at least a bit of a say
 			if( ( $ret = round( log( $age * $permission * $activity, 2 ) ) ) < 1 ) {
 				$ret = 1;
 			}
@@ -573,23 +571,23 @@ function stars_template_setup ($pStars) {
 function stars_content_list_sql( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 
-	if(!method_exists($pObject,'getContentType') || $pObject->getContentType()==null || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) )  {
+	if( !method_exists( $pObject,'getContentType' ) || $pObject->getContentType() == NULL || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) )  {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
 		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		$ret['select_sql'] .= ",
-		v_sts.`rating_count` AS stars_version_rating_count,
-		v_sts.`rating` AS stars_version_rating,
-		( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
-		( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
-		( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
+			v_sts.`rating_count` AS stars_version_rating_count,
+			v_sts.`rating` AS stars_version_rating,
+			( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
+			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
+			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
 		$ret['join_sql'] .= "
-		LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
-			( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` )
-		LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
-			( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
+				( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+				( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
 			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
@@ -602,23 +600,23 @@ function stars_content_list_sql( &$pObject ) {
 
 function stars_list_history_sql_function( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
-	if(!method_exists($pObject,'getContentType') || ($pObject->getContentType()==null) || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
+	if( !method_exists( $pObject,'getContentType' ) || ( $pObject->getContentType() == NULL ) || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
 		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
 		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 		$ret['select_sql'] .= ",
-		v_sts.`rating_count` AS stars_version_rating_count,
-		v_sts.`rating` AS stars_version_rating,
-		( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
-		( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
-		( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
+			v_sts.`rating_count` AS stars_version_rating_count,
+			v_sts.`rating` AS stars_version_rating,
+			( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
+			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
+			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
 		$ret['join_sql'] .= "
-		LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
-			( lc.`content_id`=v_sts.`content_id` AND th.`version`=v_sts.`version` )
-		LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
-			( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
+				( lc.`content_id`=v_sts.`content_id` AND th.`version`=v_sts.`version` )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+				( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
 			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
@@ -660,15 +658,15 @@ function stars_content_expunge( &$pObject, &$pParamHash ) {
 }
 
 function stars_content_can_rate($pContentId) {
-	$s = new LibertyStars($pContentId);
-	$r = $s->getUserRating($pContentId);
-	return (!empty($r));
+	$stars = new LibertyStars($pContentId);
+	$userRating = $stars->getUserRating($pContentId);
+	return (!empty($userRating));
 }
 
 function stars_content_get_rating($pContentId) {
-	$s = new LibertyStars($pContentId);
+	$stars = new LibertyStars($pContentId);
 	$lHash = array('content_id'=>intval($pContentId));
-	$s->calculateRating($lHash,true);
+	$stars->calculateRating($lHash,true);
 	$lHash['stars_rating'] = $lHash['calc']['rating'];
 	$lHash['stars_version_rating'] = $lHash['v_calc']['rating'];
 	$lHash['stars_count'] = $lHash['calc']['count'];
@@ -709,11 +707,11 @@ function stars_content_get_rating_field(&$pObject,$pVerField=FALSE,$pCountField=
 
 function stars_content_set_rating($pContentId,$pRating) {
 	global $gBitUser;
-	$s = new LibertyStars($pContentId);
+	$stars = new LibertyStars($pContentId);
 	$paramHash =array();
 	$paramHash['stars_rating']=$pRating;
 	if( $gBitUser->isRegistered() ) {
-		$s->store($paramHash);
+		$stars->store($paramHash);
 	}
 }
 

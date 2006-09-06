@@ -30,8 +30,12 @@ $gBitSmarty->assign( "starsfeed", $starsfeed );
 
 if( $gBitSystem->isAjaxRequest() ) {
 	echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
-} elseif ( !empty($tmpObject) ) {
+} elseif( !empty( $tmpObject ) ) {
 	header( "Location:".$tmpObject->getDisplayUrl() );
+	die;
+} else {
+	// where else can we go?
+	header( "Location:".BIT_ROOT_URL );
 	die;
 }
 ?>

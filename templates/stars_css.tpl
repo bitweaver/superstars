@@ -1,3 +1,4 @@
+{strip}
 {assign var=stars value=$gBitSystem->getConfig('stars_used_in_display',5)}
 {assign var=icon_width value=$gBitSystem->getConfig('stars_icon_width',22)}
 {assign var=icon_height value=$gBitSystem->getConfig('stars_icon_height',22)}
@@ -7,10 +8,13 @@
 .stars-rating li a:hover	{ldelim}background:url( {biticon ipackage=stars iname=stars url=true} ) left center; z-index:2; left:0px;{rdelim}
 {* starsLinks is not set at the point when this file is used *} 
 {section name=ratei start=1 loop=$stars+1 step=1}
-  {assign var=rate value=$smarty.section.ratei.index}
-.stars-rating a.stars-{$rate}	{ldelim}left:{$rate*$icon_width-$icon_width}px;{rdelim}
-.stars-rating a.stars-{$rate}:hover	{ldelim}width:{$rate*$icon_width}px;{rdelim}
+	{assign var=rate value=$smarty.section.ratei.index}
+	.stars-rating a.stars-{$rate}	{ldelim}left:{$rate*$icon_width-$icon_width}px;{rdelim}
+	.stars-rating a.stars-{$rate}:hover	{ldelim}width:{$rate*$icon_width}px;{rdelim}
 {/section}
 .stars-rating .stars-current	{ldelim}background:url( {biticon ipackage=stars iname=stars url=true} ) left bottom; position:absolute; height:{$icon_height}px; display:block; text-indent:-9000px; z-index:1;{rdelim}
-{strip}
+{if $gBitSystem->isFeatureActive( 'stars_per_version_rating' )}
+	.stars-wrapper-version	{ldelim}float:right;{rdelim}
+	.stars-wrapper-version .stars-rating	{ldelim}margin:0 0 0 auto;{rdelim}
+{/if}
 {/strip}
