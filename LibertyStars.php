@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.35 2006/09/06 06:48:36 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.36 2006/09/06 22:30:41 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.35 $ $Date: 2006/09/06 06:48:36 $
+* @version $Revision: 1.36 $ $Date: 2006/09/06 22:30:41 $
 * @class BitStars
 */
 
@@ -575,8 +575,20 @@ function stars_content_list_sql( &$pObject ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
-		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
-		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+
+		$ret['select_sql'] = ",
+			lc.`content_id` AS `stars_load`,
+			sts.`rating_count` AS stars_rating_count,
+			sts.`rating` AS stars_rating,
+			( sts.`rating` * $pixels / 100 ) AS stars_pixels,
+			( sth.`rating` * $stars / 100 ) AS stars_user_rating,
+			( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = "
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars` sts ON
+				( lc.`content_id`=sts.`content_id` )
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_history` sth ON
+				( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' ) ";
+
 		$ret['select_sql'] .= ",
 			v_sts.`rating_count` AS stars_version_rating_count,
 			v_sts.`rating` AS stars_version_rating,
@@ -584,10 +596,11 @@ function stars_content_list_sql( &$pObject ) {
 			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
 			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
 		$ret['join_sql'] .= "
-			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
 				( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` )
-			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
 				( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
 			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
@@ -604,8 +617,20 @@ function stars_list_history_sql_function( &$pObject ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
-		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
-		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+
+		$ret['select_sql'] = ",
+			lc.`content_id` AS `stars_load`,
+			sts.`rating_count` AS stars_rating_count,
+			sts.`rating` AS stars_rating,
+			( sts.`rating` * $pixels / 100 ) AS stars_pixels,
+			( sth.`rating` * $stars / 100 ) AS stars_user_rating,
+			( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = "
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars` sts ON
+				( lc.`content_id`=sts.`content_id` )
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_history` sth ON
+				( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+
 		$ret['select_sql'] .= ",
 			v_sts.`rating_count` AS stars_version_rating_count,
 			v_sts.`rating` AS stars_version_rating,
@@ -613,10 +638,11 @@ function stars_list_history_sql_function( &$pObject ) {
 			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
 			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
 		$ret['join_sql'] .= "
-			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
 				( lc.`content_id`=v_sts.`content_id` AND th.`version`=v_sts.`version` )
-			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+			LEFT OUTER JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
 				( v_sts.`content_id`=v_sth.`content_id` AND v_sts.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
 			$ret['where_sql'] = " AND( sts.`rating`>? OR sts.`rating` IS NULL OR sts.`rating`=? )";
