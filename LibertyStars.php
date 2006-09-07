@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.36 2006/09/06 22:30:41 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.37 2006/09/07 14:21:18 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.36 $ $Date: 2006/09/06 22:30:41 $
+* @version $Revision: 1.37 $ $Date: 2006/09/07 14:21:18 $
 * @class BitStars
 */
 
@@ -554,20 +554,41 @@ class LibertyStars extends LibertyBase {
 
 /********* SERVICE FUNCTIONS *********/
 
-function stars_template_setup ($pStars) {
-		global $gBitSystem, $gBitUser, $gBitSmarty;
-		$default_names = array();
-		for($i=0;$i<$pStars;$i++) {
-			$default_names[] = tra("Rating") . ":" . ($i+1);
-			}
-		$default_names_flat = implode(",", $default_names);	
-		$ratingNames = explode(",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
-		$gBitSmarty->assign( 'ratingNames', $ratingNames);
-		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
-		$gBitSmarty->assign( 'loadStars', TRUE );
-
+/**
+ * Function to prepare and assign data to the stars service template
+ * 
+ * @param array $pStars Stars information
+ * @access public
+ * @return void
+ */
+function stars_template_setup( $pStars ) {
+	global $gBitSystem, $gBitUser, $gBitSmarty;
+	$default_names = array();
+	for($i=0;$i<$pStars;$i++) {
+		$default_names[] = tra("Rating") . ":" . ($i+1);
+	}
+	$default_names_flat = implode(",", $default_names);	
+	$ratingNames = explode(",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
+	$gBitSmarty->assign( 'ratingNames', $ratingNames);
+	$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
+	$gBitSmarty->assign( 'loadStars', TRUE );
 }
 
+/**
+ * stars_content_list_sql 
+ * 
+ * @param array $pObject 
+ * @access public
+ * @return SQL - using the following keys:
+ *         stars_load         = content_id of the stars item belongs to
+ *         stars_rating_count = number of ratings this content has recieved so far
+ *         stars_rating       = the actual rating normalised to 100
+ *         stars_pixels       = the number of pixels that should be displayed using the cool css method
+ *         stars_user_rating  = the rating given by the user who rated is viewing the page
+ *         stars_user_pixels  = the number of pixels that should be displayed using the cool css method
+ *
+ *         all the version related stars keys are the same as the above - but relating to the currently active version as opposed to the overall rating
+ */
 function stars_content_list_sql( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 
@@ -611,6 +632,21 @@ function stars_content_list_sql( &$pObject ) {
 	}
 }
 
+/**
+ * stars_list_history_sql_function 
+ * 
+ * @param array $pObject 
+ * @access public
+ * @return SQL - using the following keys:
+ *         stars_load         = content_id of the stars item belongs to
+ *         stars_rating_count = number of ratings this content has recieved so far
+ *         stars_rating       = the actual rating normalised to 100
+ *         stars_pixels       = the number of pixels that should be displayed using the cool css method
+ *         stars_user_rating  = the rating given by the user who rated is viewing the page
+ *         stars_user_pixels  = the number of pixels that should be displayed using the cool css method
+ *
+ *         all the version related stars keys are the same as the above - but relating to the currently active version as opposed to the overall rating
+ */
 function stars_list_history_sql_function( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 	if( !method_exists( $pObject,'getContentType' ) || ( $pObject->getContentType() == NULL ) || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
@@ -653,6 +689,21 @@ function stars_list_history_sql_function( &$pObject ) {
 	}
 }
 
+/**
+ * stars_content_load_sql 
+ * 
+ * @param array $pObject 
+ * @access public
+ * @return SQL - using the following keys:
+ *         stars_load         = content_id of the stars item belongs to
+ *         stars_rating_count = number of ratings this content has recieved so far
+ *         stars_rating       = the actual rating normalised to 100
+ *         stars_pixels       = the number of pixels that should be displayed using the cool css method
+ *         stars_user_rating  = the rating given by the user who rated is viewing the page
+ *         stars_user_pixels  = the number of pixels that should be displayed using the cool css method
+ *
+ *         all the version related stars keys are the same as the above - but relating to the currently active version as opposed to the overall rating
+ */
 function stars_content_load_sql( &$pObject ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 	if( !method_exists($pObject,'getContentType') || $gBitSystem->isFeatureActive( 'stars_rate_'.$pObject->getContentType() ) ) {
@@ -662,11 +713,31 @@ function stars_content_load_sql( &$pObject ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
-		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
-		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON ( lc.`content_id`=sts.`content_id` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+		$ret['select_sql'] = ",
+			lc.`content_id` AS `stars_load`,
+			sts.`rating_count` AS stars_rating_count,
+			sts.`rating` AS stars_rating,
+			( sts.`rating` * $pixels / 100 ) AS stars_pixels,
+			( sth.`rating` * $stars / 100 ) AS stars_user_rating,
+			( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = "
+			LEFT JOIN `".BIT_DB_PREFIX."stars` sts ON
+				( lc.`content_id`=sts.`content_id` )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON
+				( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 
-		$ret['select_sql'] .= ", lc.`content_id` AS `stars_version_load`, v_sts.`rating_count` AS stars_version_rating_count, v_sts.`rating` AS stars_version_rating, ( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating, ( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
-		$ret['join_sql'] .= " LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON ( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON ( lc.`content_id`=v_sth.`content_id` AND lc.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+		$ret['select_sql'] .= ",
+			lc.`content_id` AS `stars_version_load`,
+			v_sts.`rating_count` AS stars_version_rating_count,
+			v_sts.`rating` AS stars_version_rating,
+			( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
+			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
+			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
+		$ret['join_sql'] .= "
+			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON 
+				( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+				( lc.`content_id`=v_sth.`content_id` AND lc.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
 
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
