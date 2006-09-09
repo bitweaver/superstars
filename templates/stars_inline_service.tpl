@@ -13,11 +13,11 @@
 							{assign var=rname value=$ratingNames.$rate}
 							<li>
 								{if !$gBitUser->isRegistered()}
-									<a onmouseover="document.getElementById('stars-version-output').innerHTML='{tr}You need to log in to rate{/tr}';" class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
+									<a onmouseover="$('stars-version-output').innerHTML='{tr}You need to log in to rate{/tr}';" class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
 								{elseif $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-									<a onmouseover="document.getElementById('stars-version-output').innerHTML='{$rname}';" class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
+									<a onmouseover="$('stars-version-output').innerHTML='{$rname}';" class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
 								{else}
-									<a onmouseover="document.getElementById('stars-version-output').innerHTML='{$rname}';" class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
+									<a onmouseover="$('stars-version-output').innerHTML='{$rname}';" class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
 								{/if}
 							</li>
 						{/foreach}
@@ -46,11 +46,11 @@
 						{assign var=rname value=$ratingNames.$rate}
 						<li>
 							{if !$gBitUser->isRegistered()}
-								<a onmouseover="document.getElementById('stars-output').innerHTML='{tr}You need to log in to rate{/tr}';" class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
+								<a onmouseover="$('stars-output').innerHTML='{tr}You need to log in to rate{/tr}';" class="stars-{$rate}" href="{$smarty.const.USERS_PKG_URL}login.php">{tr}You need to log in to rate{/tr}</a>
 							{elseif $gBitSystem->isFeatureActive( 'stars_use_ajax' )}
-								<a onmouseover="document.getElementById('stars-output').innerHTML='{$rname}';" class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
+								<a onmouseover="$('stars-output').innerHTML='{$rname}';" class="stars-{$rate}" href="javascript:ajax_updater( 'stars-{$serviceHash.content_id}', '{$smarty.const.STARS_PKG_URL}rate.php', 'content_id={$serviceHash.content_id}&amp;stars_rating={$rate}' );" title="{$rname}">{$rate}</a>
 							{else}
-								<a onmouseover="document.getElementById('stars-output').innerHTML='{$rname}';" class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
+								<a onmouseover="$('stars-output').innerHTML='{$rname}';" class="stars-{$rate}" href="{$smarty.const.STARS_PKG_URL}rate.php?content_id={$serviceHash.content_id}&amp;stars_rating={$rate}" title="{$rname}">{$rate}</a>
 							{/if}
 						</li>
 					{/foreach}
