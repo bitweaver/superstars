@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.38 2006/09/09 09:00:33 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.39 2006/09/09 09:13:32 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.38 $ $Date: 2006/09/09 09:00:33 $
+* @version $Revision: 1.39 $ $Date: 2006/09/09 09:13:32 $
 * @class BitStars
 */
 
@@ -564,11 +564,11 @@ class LibertyStars extends LibertyBase {
 function stars_template_setup( $pStars ) {
 	global $gBitSystem, $gBitUser, $gBitSmarty;
 	$default_names = array();
-	for($i=0;$i<$pStars;$i++) {
-		$default_names[] = tra("Rating") . ":" . ($i+1);
+	for( $i = 0; $i < $pStars; $i++) {
+		$default_names[] = tra( "Rating" ) . ": " . ( $i+1 );
 	}
-	$default_names_flat = implode(",", $default_names);	
-	$ratingNames = explode(",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
+	$default_names_flat = implode( ",", $default_names );
+	$ratingNames = explode( ",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
 	$gBitSmarty->assign( 'ratingNames', $ratingNames);
 	$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
 	$gBitSmarty->assign( 'loadStars', TRUE );

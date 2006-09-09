@@ -22,7 +22,7 @@
 		<div class="row">
 			{formlabel label="Rating Names"}
 			{forminput}
-				<input type="text" name="stars_rating_names" value="{$gBitSystem->getConfig('stars_rating_names')}" size="70" /><br />
+				<input type="text" name="stars_rating_names" value="{$gBitSystem->getConfig('stars_rating_names')}" size="50" /><br />
 				{formhelp note="Comma separated list of rating names.  Example: bad,better,best  Default is: Rating: 1, Rating: 2, ...  These names pop up when the mouse hovers over the corresponding star."}
 			{/forminput}
 		</div>
