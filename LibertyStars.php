@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.37 2006/09/07 14:21:18 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.38 2006/09/09 09:00:33 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.37 $ $Date: 2006/09/07 14:21:18 $
+* @version $Revision: 1.38 $ $Date: 2006/09/09 09:00:33 $
 * @class BitStars
 */
 
@@ -28,7 +28,7 @@ class LibertyStars extends LibertyBase {
 			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars` WHERE `content_id`=?";
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
-			if( !empty( $this->mInfo ) && $gBitSystem->isFeatureActive( 'stars_per_version_rating' ) ) {
+			if( !empty( $this->mInfo ) ) {
 				$this->mInfo['c_version'] = $this->getCurrentVersion( $this->mContentId );
 
 				$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_version_pixels`, `rating` AS `stars_version_rating`, `rating_count` AS `stars_version_rating_count` FROM `".BIT_DB_PREFIX."stars_version` WHERE `content_id`=? AND `version`=?";
