@@ -21,7 +21,13 @@ if( @BitBase::verifyId( $_REQUEST['content_id'] ) && @BitBase::verifyId( $_REQUE
 	}
 	// get up to date reading
 	$stars->load();
-	$serviceHash = array_merge( $tmpObject->mInfo, $stars->mInfo, $stars->getUserRating( $tmpObject->mContentId ) );
+
+	if( $userRating = $stars->getUserRating( $tmpObject->mContentId ) ) {
+		$serviceHash = array_merge( $tmpObject->mInfo, $stars->mInfo, $stars->getUserRating( $tmpObject->mContentId ) );
+	} else {
+		$serviceHash = array_merge( $tmpObject->mInfo, $stars->mInfo );
+	}
+
 	$gBitSmarty->assign( 'serviceHash', $serviceHash );
 } else {
 	$starsfeed['warning'] = tra( "There was a problem trying to apply your rating" );
@@ -30,8 +36,8 @@ $gBitSmarty->assign( "starsfeed", $starsfeed );
 
 if( $gBitSystem->isAjaxRequest() ) {
 	echo $gBitSmarty->fetch( 'bitpackage:stars/stars_inline_service.tpl' );
-} elseif( !empty( $tmpObject ) ) {
-	header( "Location:".$tmpObject->getDisplayUrl() );
+} elseif( !empty( $tmpObject ) && $location = $tmpObject->getDisplayUrl() ) {
+	header( "Location:".$location );
 	die;
 } else {
 	// where else can we go?
