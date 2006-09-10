@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.41 2006/09/10 10:08:22 squareing Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.42 2006/09/10 11:14:12 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.41 $ $Date: 2006/09/10 10:08:22 $
+* @version $Revision: 1.42 $ $Date: 2006/09/10 11:14:12 $
 * @class BitStars
 */
 
@@ -320,8 +320,7 @@ class LibertyStars extends LibertyBase {
 		if( @BitBase::verifyId( $pContentId ) ) {
 			if (!empty($pVersion)) {
 				$c_version = $pVersion;
-			}
-			else {	
+			} else {
 				$c_version = $this->getCurrentVersion( $this->mContentId );
 			}
 			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
@@ -366,11 +365,11 @@ class LibertyStars extends LibertyBase {
 	* Computes a total rating from a list of indiv rating entries
 	* normally would be called with an array of rows from stars_history
 	**/
-	function calc_rating_from_summary($summary) {
+	function calculateRatingFromSummary( $pSummary ) {
 			global $gBitSystem;
 			$calc['sum'] = $calc['weight'] = $calc['count'] = 0;
-			if ($summary) {
-				foreach( $summary as $info ) {
+			if ($pSummary) {
+				foreach( $pSummary as $info ) {
 					$calc['sum']    += $info['weight'] * $info['rating'];
 					$calc['weight'] += $info['weight'];
 					$calc['count']  += $info['rating_count'];
@@ -420,7 +419,7 @@ class LibertyStars extends LibertyBase {
 		foreach( $vData as $content_id =>$versions ) {
 			foreach ($versions as $version) {
 				$summary = $this->getRatingSummary( $content_id , $version );
-				list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
+				list($rating,$rating_count) = $this->calculateRatingFromSummary( $summary );
 				$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_version` SET `rating`=?, `rating_count`=? WHERE `content_id`=? AND version=?", array( $rating, $rating_count, $content_id, $version ) );
 			}
 		}
@@ -434,7 +433,7 @@ class LibertyStars extends LibertyBase {
 		$normalized_rating = $pRating / $stars * 100;
 		return $normalized_rating;
 	}
-		
+
 	/**
 	* calculate the correct values to insert into the database for the overall content ratings
 	* both version specific and non-version specific
@@ -454,13 +453,13 @@ class LibertyStars extends LibertyBase {
 		$content_id = NULL;
 		$version = 0;
 		$summary = $this->getRatingSummary( $content_id , $version );
-		list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
+		list($rating,$rating_count) = $this->calculateRatingFromSummary( $summary );
 		$pParamHash['calc']['rating'] = $rating;
 		$pParamHash['calc']['count'] = $rating_count;
 
 		$version = $this->getCurrentVersion($this->mContentId );
 		$summary = $this->getRatingSummary( $content_id , $version );
-		list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
+		list($rating,$rating_count) = $this->calculateRatingFromSummary( $summary );
 		$pParamHash['v_calc']['rating'] = $rating;
 		$pParamHash['v_calc']['count'] = $rating_count;
 
@@ -537,7 +536,7 @@ class LibertyStars extends LibertyBase {
 				WHERE sth.`version` != 0 AND lch.`user_id`=?
 				GROUP BY sth.`rating`";
 			$summary = $this->mDb->getAll( $query, $bindVars );
-			list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
+			list($rating,$rating_count) = $this->calculateRatingFromSummary( $summary );
 			$ret['stars_rating'] = $rating;
 			$ret['stars_rating_count'] = $rating_count;
 
