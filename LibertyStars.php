@@ -1,9 +1,9 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.40 2006/09/10 08:43:56 jht001 Exp $
+* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.41 2006/09/10 10:08:22 squareing Exp $
 * @date created 2006/02/10
 * @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.40 $ $Date: 2006/09/10 08:43:56 $
+* @version $Revision: 1.41 $ $Date: 2006/09/10 10:08:22 $
 * @class BitStars
 */
 
@@ -66,7 +66,7 @@ class LibertyStars extends LibertyBase {
 
 		$ret = $bindVars = array();
 		$where = $order = '';
-		
+
 		$where .= empty( $where ) ? ' WHERE ' : ' AND ';
 		$where .= ' sts.`version` = 0';
 
@@ -127,7 +127,14 @@ class LibertyStars extends LibertyBase {
 			global $gBitSystem;
 			$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 			$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
-			$query = "SELECT ( `rating` * $pixels / 100 ) AS `stars_pixels`, `rating` AS `stars_rating`, `rating_count` AS `stars_rating_count`, `content_id` FROM `".BIT_DB_PREFIX."stars_version` WHERE `content_id`=? AND version = 0";
+			$query = "
+				SELECT
+					( `rating` * $pixels / 100 ) AS `stars_pixels`,
+					`rating` AS `stars_rating`,
+					`rating_count` AS `stars_rating_count`,
+					`content_id`
+				FROM `".BIT_DB_PREFIX."stars_version`
+				WHERE `content_id`=? AND version = 0";
 			$obj = $this->getLibertyObject( $this->mContentId );
 			$this->mInfo = $this->mDb->getRow( $query, array( $this->mContentId ) );
 			$this->mInfo = array_merge( $this->mInfo, $obj->mInfo );
@@ -221,12 +228,12 @@ class LibertyStars extends LibertyBase {
 						$result = $this->mDb->associateInsert( $table."_history", $history );
 				}
 			}
-					
+
 
 				#build the overall content ratings, both version specific and non-version specific
 				if( !$this->calculateRating( $pParamHash ) ) {
 					$this->mErrors['calculate_rating'] = "There was a problem calculating the rating.";
-			//$this->mDb->rollBackTrans();
+					//$this->mDb->rollBackTrans();
 					return FALSE;
 				}
 
@@ -260,8 +267,8 @@ class LibertyStars extends LibertyBase {
 				if (!$affected_rows) {
 					$result = $this->mDb->associateInsert( $table."_version", $version_rating );
 				}
-			} 
-			
+			}
+
 			$this->mDb->CompleteTrans();
 			global $gLibertySystem;
 
@@ -412,7 +419,7 @@ class LibertyStars extends LibertyBase {
 		// and version 1... for version specific ratings
 		foreach( $vData as $content_id =>$versions ) {
 			foreach ($versions as $version) {
-			    $summary = $this->getRatingSummary( $content_id , $version );
+				$summary = $this->getRatingSummary( $content_id , $version );
 				list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
 				$result = $this->mDb->query( "UPDATE `".BIT_DB_PREFIX."stars_version` SET `rating`=?, `rating_count`=? WHERE `content_id`=? AND version=?", array( $rating, $rating_count, $content_id, $version ) );
 			}
@@ -446,13 +453,13 @@ class LibertyStars extends LibertyBase {
 		$user_weight = $this->calculateUserWeight();
 		$content_id = NULL;
 		$version = 0;
-	    $summary = $this->getRatingSummary( $content_id , $version );
+		$summary = $this->getRatingSummary( $content_id , $version );
 		list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
 		$pParamHash['calc']['rating'] = $rating;
 		$pParamHash['calc']['count'] = $rating_count;
 
 		$version = $this->getCurrentVersion($this->mContentId );
-	    $summary = $this->getRatingSummary( $content_id , $version );
+		$summary = $this->getRatingSummary( $content_id , $version );
 		list($rating,$rating_count) = $this->calc_rating_from_summary($summary);
 		$pParamHash['v_calc']['rating'] = $rating;
 		$pParamHash['v_calc']['count'] = $rating_count;
@@ -552,18 +559,17 @@ class LibertyStars extends LibertyBase {
  * @access public
  * @return void
  */
-function stars_template_setup ($pStars) {
-		global $gBitSystem, $gBitUser, $gBitSmarty;
-		$default_names = array();
-		for( $i=0; $i<$pStars; $i++) {
-			$default_names[] = tra( "Rating" ) . ": " . ( $i+1 );
-			}
-		$default_names_flat = implode( ",", $default_names );	
-		$ratingNames = explode( ",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
-		$gBitSmarty->assign( 'ratingNames', $ratingNames );
-		$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
-		$gBitSmarty->assign( 'loadStars', TRUE );
-
+function stars_template_setup( $pStars ) {
+	global $gBitSystem, $gBitUser, $gBitSmarty;
+	$default_names = array();
+	for( $i = 0; $i < $pStars; $i++) {
+		$default_names[] = tra( "Rating" ) . ": " . ( $i+1 );
+	}
+	$default_names_flat = implode( ",", $default_names );
+	$ratingNames = explode( ",", "," . $gBitSystem->getConfig( 'stars_rating_names', $default_names_flat ) );
+	$gBitSmarty->assign( 'ratingNames', $ratingNames);
+	$gBitSmarty->assign( 'starsLinks', $hash = array_fill( 1, $pStars, 1 ) );
+	$gBitSmarty->assign( 'loadStars', TRUE );
 }
 
 /**
@@ -705,11 +711,31 @@ function stars_content_load_sql( &$pObject ) {
 		$stars = $gBitSystem->getConfig( 'stars_used_in_display', 5 );
 		$pixels = $stars *  $gBitSystem->getConfig( 'stars_icon_width', 22 );
 		stars_template_setup($stars);
-		$ret['select_sql'] = ", lc.`content_id` AS `stars_load`, sts.`rating_count` AS stars_rating_count, sts.`rating` AS stars_rating, ( sts.`rating` * $pixels / 100 ) AS stars_pixels, ( sth.`rating` * $stars / 100 ) AS stars_user_rating, ( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
-		$ret['join_sql'] = " LEFT JOIN `".BIT_DB_PREFIX."stars_version` sts ON ( lc.`content_id`=sts.`content_id` AND sts.`version` = 0 ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON ( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
+		$ret['select_sql'] = ",
+			lc.`content_id` AS `stars_load`,
+			sts.`rating_count` AS stars_rating_count,
+			sts.`rating` AS stars_rating,
+			( sts.`rating` * $pixels / 100 ) AS stars_pixels,
+			( sth.`rating` * $stars / 100 ) AS stars_user_rating,
+			( sth.`rating` * $pixels / 100 ) AS stars_user_pixels ";
+		$ret['join_sql'] = "
+			LEFT JOIN `".BIT_DB_PREFIX."stars_version` sts ON
+				( lc.`content_id`=sts.`content_id` AND sts.`version` = 0 )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` sth ON
+				( lc.`content_id`=sth.`content_id` AND lc.`version`=sth.`version` AND sth.`user_id`='".$gBitUser->mUserId."' )";
 
-		$ret['select_sql'] .= ", lc.`content_id` AS `stars_version_load`, v_sts.`rating_count` AS stars_version_rating_count, v_sts.`rating` AS stars_version_rating, ( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating, ( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
-		$ret['join_sql'] .= " LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON ( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` ) LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON ( lc.`content_id`=v_sth.`content_id` AND lc.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
+		$ret['select_sql'] .= ",
+			lc.`content_id` AS `stars_version_load`,
+			v_sts.`rating_count` AS stars_version_rating_count,
+			v_sts.`rating` AS stars_version_rating,
+			( v_sts.`rating` * $pixels / 100 ) AS stars_version_pixels,
+			( v_sth.`rating` * $stars / 100 ) AS stars_version_user_rating,
+			( v_sth.`rating` * $pixels / 100 ) AS stars_version_user_pixels ";
+		$ret['join_sql'] .= "
+			LEFT JOIN `".BIT_DB_PREFIX."stars_version` v_sts ON
+				( lc.`content_id`=v_sts.`content_id` AND lc.`version`=v_sts.`version` )
+			LEFT JOIN `".BIT_DB_PREFIX."stars_history` v_sth ON
+				( lc.`content_id`=v_sth.`content_id` AND lc.`version`=v_sth.`version` AND v_sth.`user_id`='".$gBitUser->mUserId."' )";
 
 		if( $gBitSystem->isFeatureActive( 'stars_auto_hide_content' ) ) {
 			// need to take rating_count into the equation as well
@@ -730,9 +756,9 @@ function stars_content_can_rate($pContentId) {
 #	$stars = new LibertyStars($pContentId);
 #	$userRating = $stars->getUserRating($pContentId);
 #	return (!empty($userRating));
-# Users can always rate.
-# If they rate more than once, only the last rate is used.
-return TRUE;
+	# Users can always rate.
+	# If they rate more than once, only the last rate is used.
+	return TRUE;
 }
 
 function stars_content_get_rating($pContentId) {
