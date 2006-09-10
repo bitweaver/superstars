@@ -1,27 +1,22 @@
 <?php
 $tables = array(
-	'stars' => "
-		content_id I4 NOTNULL,
-		rating_count I4,
-		rating I4
-		CONSTRAINT '
-			, CONSTRAINT `stars_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
-	",
 	'stars_version' => "
-		content_id I4 NOTNULL,
-		version I4 NOTNULL,
+		content_id I4 NOTNULL PRIMARY,
+		version I4 NOTNULL PRIMARY,
 		rating_count I4,
-		rating I4
+		rating I4,
+		update_count I4 DEFAULT 0;
 		CONSTRAINT '
 			, CONSTRAINT `stars_version_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )'
 	",
 	'stars_history' => "
-		content_id I4 NOTNULL,
-		version I4 NOTNULL,
-		user_id I4 NOTNULL,
+		content_id I4 NOTNULL PRIMARY,
+		version I4 NOTNULL PRIMARY,
+		user_id I4 NOTNULL PRIMARY,
 		rating I4 NOTNULL,
 		weight I4 NOTNULL,
-		rating_time I8 NOTNULL DEFAULT 0
+		rating_time I8 NOTNULL DEFAULT 0,
+		update_count I4 DEFAULT 0
 		CONSTRAINT '
 			, CONSTRAINT `stars_history_content_ref` FOREIGN KEY (`content_id`) REFERENCES `".BIT_DB_PREFIX."liberty_content`( `content_id` )
 			, CONSTRAINT `stars_history_user_ref` FOREIGN KEY (`user_id`) REFERENCES `".BIT_DB_PREFIX."users_users`( `user_id` )'
@@ -33,6 +28,15 @@ global $gBitInstaller;
 foreach( array_keys( $tables ) AS $tableName ) {
 	$gBitInstaller->registerSchemaTable( STARS_PKG_NAME, $tableName, $tables[$tableName] );
 }
+
+$indices = array (
+	'stars_users_idx' => array( 'table' => 'stars_history', 'user_id' => 'user_id', 'opts' => NULL ),
+);
+
+
+
+$gBitInstaller->registerSchemaIndexes( USERS_PKG_NAME, $indices );
+
 
 $gBitInstaller->registerPackageInfo( STARS_PKG_NAME, array(
 	'description' => "A ratings package that allows users to rate any content using a basic interface.",
