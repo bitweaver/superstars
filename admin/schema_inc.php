@@ -30,12 +30,12 @@ foreach( array_keys( $tables ) AS $tableName ) {
 }
 
 $indices = array (
-	'stars_users_idx' => array( 'table' => 'stars_history', 'col' => 'user_id', 'opts' => NULL ),
+	'stars_users_idx' => array( 'table' => 'stars_history', 'cols' => 'user_id', 'opts' => NULL ),
 );
 
 
 
-$gBitInstaller->registerSchemaIndexes( USERS_PKG_NAME, $indices );
+$gBitInstaller->registerSchemaIndexes( STARS_PKG_NAME, $indices );
 
 
 $gBitInstaller->registerPackageInfo( STARS_PKG_NAME, array(
