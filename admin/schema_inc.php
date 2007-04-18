@@ -30,7 +30,7 @@ foreach( array_keys( $tables ) AS $tableName ) {
 }
 
 $indices = array (
-	'stars_users_idx' => array( 'table' => 'stars_history', 'user_id' => 'user_id', 'opts' => NULL ),
+	'stars_users_idx' => array( 'table' => 'stars_history', 'col' => 'user_id', 'opts' => NULL ),
 );
 
 
