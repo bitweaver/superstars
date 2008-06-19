@@ -1,14 +1,20 @@
 <?php
 /**
-* $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.43 2006/09/10 11:22:18 squareing Exp $
-* @date created 2006/02/10
-* @author xing <xing@synapse.plus.com>
-* @version $Revision: 1.43 $ $Date: 2006/09/10 11:22:18 $
-* @class BitStars
-*/
+ * $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.44 2008/06/19 05:03:26 lsces Exp $
+ * @date created 2006/02/10
+ * @author xing <xing@synapse.plus.com>
+ * @version $Revision: 1.44 $ $Date: 2008/06/19 05:03:26 $
+ * @package superstars
+ */
 
+/**
+ * Initialization
+ */
 require_once( KERNEL_PKG_PATH.'BitBase.php' );
 
+/**
+ * @package superstars
+ */
 class LibertyStars extends LibertyBase {
 	var $mContentId;
 

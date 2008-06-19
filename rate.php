@@ -1,4 +1,16 @@
 <?php
+/**
+ * $Header: /cvsroot/bitweaver/_bit_superstars/rate.php,v 1.16 2008/06/19 05:03:26 lsces Exp $
+ * @date created 2006/02/10
+ * @author xing <xing@synapse.plus.com>
+ * @version $Revision: 1.16 $ $Date: 2008/06/19 05:03:26 $
+ * @package superstars
+ * @subpackage functions
+ */
+
+/**
+ * Initialization
+ */
 require_once( "../bit_setup_inc.php" );
 $gBitSystem->verifyPackage( 'stars' );
 $starsfeed = array();
