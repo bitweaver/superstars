@@ -11,5 +11,5 @@ $ratedContent = $stars->getList( $listHash );
 
 $gBitSmarty->assign( 'ratedContent', $ratedContent );
 $gBitSmarty->assign( 'listInfo', $listHash['listInfo'] );
-$gBitSystem->display( 'bitpackage:stars/rated.tpl', tra( 'Rated Content' ) );
+$gBitSystem->display( 'bitpackage:stars/rated.tpl', tra( 'Rated Content' ) , array( 'display_mode' => 'display' ));
 ?>
