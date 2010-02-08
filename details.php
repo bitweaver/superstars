@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_superstars/details.php,v 1.4 2008/06/25 22:04:40 spiderr Exp $
+ * $Header: /cvsroot/bitweaver/_bit_superstars/details.php,v 1.5 2010/02/08 21:27:25 wjames5 Exp $
  * date created 2006/02/10
  * @author xing <xing@synapse.plus.com>
- * @version $Revision: 1.4 $ $Date: 2008/06/25 22:04:40 $
+ * @version $Revision: 1.5 $ $Date: 2010/02/08 21:27:25 $
  * @package superstars
  * @subpackage functions
  */
@@ -11,7 +11,7 @@
 /**
  * Initialization
  */
-require_once( "../bit_setup_inc.php" );
+require_once( "../kernel/setup_inc.php" );
 require_once( STARS_PKG_PATH."LibertyStars.php" );
 
 $gBitSystem->verifyPackage( 'stars' );
