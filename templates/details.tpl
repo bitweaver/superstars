@@ -8,7 +8,7 @@
 			<div class="row">
 				{formlabel label="Title"}
 				{forminput}
-					<a href="{$starsDetails.display_url}">{$starsDetails.title}</a> <small>({$starsDetails.content_type.content_description})</small>
+					<a href="{$starsDetails.display_url}">{$starsDetails.title}</a> <small>({$starsDetails.content_type.content_name})</small>
 				{/forminput}
 			</div>
 

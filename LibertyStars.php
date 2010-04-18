@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.45 2008/06/19 09:34:24 lsces Exp $
+ * $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.46 2010/04/18 02:27:24 wjames5 Exp $
  * date created 2006/02/10
  * @author xing <xing@synapse.plus.com>
- * @version $Revision: 1.45 $ $Date: 2008/06/19 09:34:24 $
+ * @version $Revision: 1.46 $ $Date: 2010/04/18 02:27:24 $
  * @package superstars
  */
 
@@ -93,7 +93,7 @@ class LibertyStars extends LibertyBase {
 
 		$query = "SELECT sts.*, lch.`hits`, lch.`last_hit`, lc.`event_time`, lc.`title`,
 			lc.`last_modified`, lc.`content_type_guid`, lc.`ip`, lc.`created`,
-			lct.`content_description`
+			lct.`content_name`
 			FROM `".BIT_DB_PREFIX."stars_version` sts
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content` lc ON ( lc.`content_id` = sts.`content_id` )
 				INNER JOIN `".BIT_DB_PREFIX."liberty_content_types` lct ON ( lct.`content_type_guid` = lc.`content_type_guid` )

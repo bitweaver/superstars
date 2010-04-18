@@ -16,7 +16,7 @@
 			{foreach from=$ratedContent item=item}
 				<tr class="{cycle values="odd,even"}">
 					<td>{$item.display_link}</td>
-					<td>{$item.content_description}</td>
+					<td>{$item.content_name}</td>
 					<td style="text-align:right;">{$item.rating_count}</td>
 					<td style="text-align:right;">
 						<a href="{$smarty.const.STARS_PKG_URL}details.php?content_id={$item.content_id}">{$item.rating} / 100</a>
