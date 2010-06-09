@@ -1,9 +1,9 @@
 <?php
 /**
- * $Header: /cvsroot/bitweaver/_bit_superstars/LibertyStars.php,v 1.46 2010/04/18 02:27:24 wjames5 Exp $
+ * $Header$
  * date created 2006/02/10
  * @author xing <xing@synapse.plus.com>
- * @version $Revision: 1.46 $ $Date: 2010/04/18 02:27:24 $
+ * @version $Revision$
  * @package superstars
  */
 

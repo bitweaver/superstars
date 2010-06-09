@@ -1,5 +1,5 @@
 <?php
-// $Header: /cvsroot/bitweaver/_bit_superstars/admin/admin_stars_inc.php,v 1.19 2010/04/17 15:36:08 wjames5 Exp $
+// $Header$
 // Copyright (c) 2005 bitweaver Stars
 // All Rights Reserved. See below for details and a complete list of authors.
 // Licensed under the GNU LESSER GENERAL PUBLIC LICENSE. See http://www.gnu.org/copyleft/lesser.html for details.
