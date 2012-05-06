@@ -18,8 +18,8 @@ require_once( KERNEL_PKG_PATH.'BitBase.php' );
 class LibertyStars extends LibertyBase {
 	var $mContentId;
 
-	function LibertyStars( $pContentId=NULL ) {
-		LibertyBase::LibertyBase();
+	function __construct( $pContentId=NULL ) {
+		parent::__construct();
 		$this->mContentId = $pContentId;
 	}
 
