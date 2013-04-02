@@ -4,7 +4,7 @@
 	{legend legend="Generic Settings"}
 		<input type="hidden" name="page" value="{$page}" />
 		{foreach from=$formStarsOptions key=item item=output}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
 					{if $output.type == 'numeric'}
@@ -19,7 +19,7 @@
 			</div>
 		{/foreach}
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Rating Names"}
 			{forminput}
 				<input type="text" name="stars_rating_names" value="{$gBitSystem->getConfig('stars_rating_names')}" size="50" /><br />
@@ -27,7 +27,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Icon Dimensions"}
 			{forminput}
 				{tr}Width{/tr}: <input type="text" name="stars_icon_width" value="{$gBitSystem->getConfig('stars_icon_width')}" size="5" /> {tr}pixels{/tr}<br />
@@ -36,7 +36,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Ratable Content"}
 			{forminput}
 				{html_checkboxes options=$formRatable.guids value=y name=ratable_content separator="<br />" checked=$formRatable.checked}
@@ -44,7 +44,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Rated Content" for=""}
 			{forminput}
 				{smartlink ititle="View a list of rated content" ipackage=stars ifile="index.php"}
@@ -54,7 +54,7 @@
 
 	{legend legend="Version Rating"}
 		{foreach from=$formStarsVersion key=item item=output}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
 					{if $output.type == 'numeric'}
@@ -73,7 +73,7 @@
 	{legend legend="Weighting"}
 		{formhelp note="You can influence how much importance is put on either of the following values when a user rates content.<br />If you don't want to use a particular one, just set it to 0."}
 		{foreach from=$formStarsWeight key=item item=output}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label=`$output.label` for=$item}
 				{forminput}
 					{if $output.type == 'numeric'}
@@ -86,7 +86,7 @@
 			</div>
 		{/foreach}
 
-		<div class="row">
+		<div class="control-group">
 			{formlabel label="Re-caclulate Ratings" for=recalculate}
 			{forminput}
 				<input type="checkbox" name="recalculate" id="recalculate" />
@@ -94,7 +94,7 @@
 			{/forminput}
 		</div>
 
-		<div class="row submit">
+		<div class="control-group submit">
 			<input type="submit" name="stars_preferences" value="{tr}Change preferences{/tr}" />
 		</div>
 	{/legend}

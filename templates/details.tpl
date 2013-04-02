@@ -5,49 +5,49 @@
 
 	<div class="body">
 		{legend legend="Rating Details"}
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Title"}
 				{forminput}
 					<a href="{$starsDetails.display_url}">{$starsDetails.title}</a> <small>({$starsDetails.content_type.content_name})</small>
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Creator"}
 				{forminput}
 					{displayname real_name=$starsDetails.creator_real_name login=$starsDetails.creator_user}
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Last Editor"}
 				{forminput}
 					{displayname real_name=$starsDetails.modifier_real_name login=$starsDetails.modifier_user}
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Hits"}
 				{forminput}
 					{$starsDetails.hits}
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Rating"}
 				{forminput}
 					{$starsDetails.stars_rating} / 100
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Number of ratings"}
 				{forminput}
 					{$starsDetails.stars_rating_count}
 				{/forminput}
 			</div>
 
-			<div class="row">
+			<div class="control-group">
 				{formlabel label="Users who have rated"}
 				{forminput}
 					{if $smarty.request.show_raters}
