@@ -95,7 +95,7 @@
 		</div>
 
 		<div class="control-group submit">
-			<input type="submit" name="stars_preferences" value="{tr}Change preferences{/tr}" />
+			<input type="submit" class="btn" name="stars_preferences" value="{tr}Change preferences{/tr}" />
 		</div>
 	{/legend}
 {/form}
