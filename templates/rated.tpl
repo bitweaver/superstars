@@ -4,7 +4,7 @@
 	</div>
 
 	<div class="body">
-		<table class="data">
+		<table class="table data">
 			<caption>{tr}List of rated content{/tr}</caption>
 			<tr>
 				<th>{smartlink ititle="Title" isort="title"}</th>
