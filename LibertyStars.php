@@ -110,7 +110,7 @@ class LibertyStars extends LibertyBase {
 			}
 			if( !empty( $gBitSystem->mPackages[$type['handler_package']] ) ) {
 				$aux['display_link'] = $type['content_object']->getDisplayLink( $aux['title'], $aux );
-				$aux['title']        = $type['content_object']->getTitle( $aux );
+				$aux['title']        = $type['content_object']->getTitleFromHash( $aux );
 				$aux['display_url']  = $type['content_object']->getDisplayUrl( $aux['content_id'], $aux );
 			}
 			$ret[] = $aux;
