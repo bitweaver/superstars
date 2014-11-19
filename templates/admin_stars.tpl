@@ -87,10 +87,10 @@
 		{/foreach}
 
 		<div class="form-group">
-			<label class="checkbox">
+			{forminput label="checkbox"}
 				<input type="checkbox" name="recalculate" id="recalculate" />Re-caclulate Ratings
 				{formhelp note="You can force a re-calculation of the entire rating database. this will update the users weighting with your current settings and will re-evaluate all rated objects."}
-			</label>
+			{/forminput}
 		</div>
 
 		<div class="form-group submit">
